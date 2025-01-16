@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multiplayer Chess</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+        #board {
+            display: grid;
+            grid-template-columns: repeat(8, 60px);
+            grid-template-rows: repeat(8, 60px);
+            border: 2px solid #333;
+        }
+        .square {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2em;
+            cursor: pointer;
+        }
+        .white {
+            background-color: #eee;
+        }
+        .black {
+            background-color: #333;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div id="board"></div>
+    <script>
+        const board = document.getElementById('board');
+        const initialBoard = [
+            'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r',
+            'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p',
+            '', '', '', '', '', '', '', '',
+            '', '', '', '', '', '', '', '',
+            '', '', '', '', '', '', '', '',
+            '', '', '', '', '', '', '', '',
+            'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P',
+            'R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'
+        ];
+
+        let selectedSquare = null;
+        let currentPlayer = 'white';
+
+        function createBoard() {
+            initialBoard.forEach((piece, index) => {
+                const square = document.createElement('div');
+                square.className = 'square ' + ((Math.floor(index / 8) + index) % 2 === 0 ? 'white' : 'black');
+                square.dataset.index = index;
+                square.innerHTML = piece ? piece : '';
+                square.addEventListener('click', () => handleSquareClick(square, piece));
+                board.appendChild(square);
+            });
+        }
+
+        function handleSquareClick(square, piece) {
+            const index = square.dataset.index;
+
+            if (selectedSquare) {
+                const selectedPiece = initialBoard[selectedSquare.dataset.index];
+                if (isValidMove(selectedPiece, index)) {
+                    initialBoard[index] = selectedPiece;
+                    initialBoard[selectedSquare.dataset.index] = '';
+                    renderBoard();
+                    currentPlayer = currentPlayer === 'white' ? 'black' : 'white';
+                }
+                selectedSquare.classList.remove('selected');
+                selectedSquare = null;
+            } else {
+                if (piece && (currentPlayer === 'white' ? piece === piece.toUpperCase() : piece === piece.toLowerCase())) {
+                    selectedSquare = square;
+                    selectedSquare.classList.add('selected');
+                }
+            }
+        }
+
+        function isValidMove(piece, targetIndex) {
+            // Basic validation: only allow moving to an empty square or capturing opponent's piece
+            return initialBoard[targetIndex] === '' || 
+                   (currentPlayer === 'white' && initialBoard[targetIndex] === initialBoard[targetIndex].toLowerCase()) ||
+                   (currentPlayer === 'black' && initialBoard[targetIndex] === initialBoard[targetIndex].toUpperCase());
+        }
+
+        function renderBoard() {
+            const squares = document.querySelectorAll('.square');
+            squares.forEach((square, index) => {
+                square.innerHTML = initialBoard[index] ? initialBoard[index] : '';
+            });
+        }
+
+        createBoard();
+    </script>
+</body>
+</html>
