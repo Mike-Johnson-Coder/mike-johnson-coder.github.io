@@ -34,6 +34,12 @@
             background-color: #333;
             color: white;
         }
+        .highlight {
+            background-color: yellow;
+        }
+        .selected {
+            border: 2px solid red;
+        }
     </style>
 </head>
 <body>
@@ -76,21 +82,160 @@
                     renderBoard();
                     currentPlayer = currentPlayer === 'white' ? 'black' : 'white';
                 }
+                clearHighlights();
                 selectedSquare.classList.remove('selected');
                 selectedSquare = null;
             } else {
                 if (piece && (currentPlayer === 'white' ? piece === piece.toUpperCase() : piece === piece.toLowerCase())) {
                     selectedSquare = square;
                     selectedSquare.classList.add('selected');
+                    highlightValidMoves(selectedSquare.dataset.index, piece);
                 }
             }
         }
 
-        function isValidMove(piece, targetIndex) {
-            // Basic validation: only allow moving to an empty square or capturing opponent's piece
-            return initialBoard[targetIndex] === '' || 
-                   (currentPlayer === 'white' && initialBoard[targetIndex] === initialBoard[targetIndex].toLowerCase()) ||
-                   (currentPlayer === 'black' && initialBoard[targetIndex] === initialBoard[targetIndex].toUpperCase());
+        function highlightValidMoves(index, piece) {
+            const validMoves = getValidMoves(index, piece);
+            validMoves.forEach(move => {
+                const square = document.querySelector(`.square[data-index='${move}']`);
+                if (square) {
+                    square.classList.add('highlight');
+                }
+            });
+        }
+
+        function clearHighlights() {
+            const highlightedSquares = document.querySelectorAll('.highlight');
+            highlightedSquares.forEach(square => {
+                square.classList.remove('highlight');
+            });
+        }
+
+        function getValidMoves(index, piece) {
+            const moves = [];
+            const row = Math.floor(index / 8);
+            const col = index % 8;
+
+            // Pawn movement
+            if (piece.toLowerCase() === 'p') {
+                const direction = piece === 'P' ? -1 : 1;
+                const startRow = piece === 'P' ? 6 : 1;
+
+                // Move forward
+                if (initialBoard[index + direction * 8] === '') {
+                    moves.push(index + direction * 8);
+                }
+                // Double move from starting position
+                if (row === startRow && initialBoard[index
+                if (row === startRow && initialBoard[index + direction * 16] === '') {
+                    moves.push(index + direction * 16);
+                }
+                // Capture diagonally
+                if (initialBoard[index + direction * 8 - 1] && initialBoard[index + direction * 8 - 1].toLowerCase() !== piece.toLowerCase()) {
+                    moves.push(index + direction * 8 - 1);
+                }
+                if (initialBoard[index + direction * 8 + 1] && initialBoard[index + direction * 8 + 1].toLowerCase() !== piece.toLowerCase()) {
+                    moves.push(index + direction * 8 + 1);
+                }
+            }
+
+            // Rook movement
+            if (piece.toLowerCase() === 'r') {
+                const directions = [-1, 1, -8, 8]; // left, right, up, down
+                directions.forEach(dir => {
+                    for (let i = 1; i < 8; i++) {
+                        const newIndex = index + dir * i;
+                        if (newIndex < 0 || newIndex >= 64) break; // Out of bounds
+                        if (dir === -1 && (newIndex % 8 === 7)) break; // Left edge
+                        if (dir === 1 && (newIndex % 8 === 0)) break; // Right edge
+                        if (initialBoard[newIndex] === '') {
+                            moves.push(newIndex);
+                        } else {
+                            if (initialBoard[newIndex].toLowerCase() !== piece.toLowerCase()) {
+                                moves.push(newIndex);
+                            }
+                            break; // Stop if we hit a piece
+                        }
+                    }
+                });
+            }
+
+            // Knight movement
+            if (piece.toLowerCase() === 'n') {
+                const knightMoves = [-17, -15, -10, -6, 6, 10, 15, 17];
+                knightMoves.forEach(move => {
+                    const newIndex = index + move;
+                    if (newIndex >= 0 && newIndex < 64) {
+                        if (move === -17 && (index % 8 === 0)) return; // Left edge
+                        if (move === -15 && (index % 8 === 7)) return; // Right edge
+                        if (move === 6 && (index % 8 === 7)) return; // Right edge
+                        if (move === 10 && (index % 8 === 0)) return; // Left edge
+                        if (initialBoard[newIndex] === '' || initialBoard[newIndex].toLowerCase() !== piece.toLowerCase()) {
+                            moves.push(newIndex);
+                        }
+                    }
+                });
+            }
+
+            // Bishop movement
+            if (piece.toLowerCase() === 'b') {
+                const directions = [-9, -7, 7, 9]; // diagonal directions
+                directions.forEach(dir => {
+                    for (let i = 1; i < 8; i++) {
+                        const newIndex = index + dir * i;
+                        if (newIndex < 0 || newIndex >= 64) break; // Out of bounds
+                        if (dir === -9 && (newIndex % 8 === 7)) break; // Right edge
+                        if (dir === -7 && (newIndex % 8 === 0)) break; // Left edge
+                        if (initialBoard[newIndex] === '') {
+                            moves.push(newIndex);
+                        } else {
+                            if (initialBoard[newIndex].toLowerCase() !== piece.toLowerCase()) {
+                                moves.push(newIndex);
+                            }
+                            break; // Stop if we hit a piece
+                        }
+                    }
+                });
+            }
+
+            // Queen movement
+            if (piece.toLowerCase() === 'q') {
+                const directions = [-1, 1, -8, 8, -9, -7, 7, 9]; // all directions
+                directions.forEach(dir => {
+                    for (let i = 1; i < 8; i++) {
+                        const newIndex = index + dir * i;
+                        if (newIndex < 0 || newIndex >= 64) break; // Out of bounds
+                        if (dir === -1 && (newIndex % 8 === 7)) break; // Left edge
+                        if (dir === 1 && (newIndex % 8 === 0)) break; // Right edge
+                        if (initialBoard[newIndex] === '') {
+                            moves.push(newIndex);
+                        } else {
+                            if (initialBoard[newIndex].toLowerCase() !== piece.toLower
+                            if (initialBoard[newIndex].toLowerCase() !== piece.toLowerCase()) {
+                                moves.push(newIndex);
+                            }
+                            break; // Stop if we hit a piece
+                        }
+                    }
+                });
+            }
+
+            // King movement
+            if (piece.toLowerCase() === 'k') {
+                const kingMoves = [-1, 1, -8, 8, -9, -7, 7, 9]; // all directions
+                kingMoves.forEach(move => {
+                    const newIndex = index + move;
+                    if (newIndex >= 0 && newIndex < 64) {
+                        if (move === -1 && (index % 8 === 0)) return; // Left edge
+                        if (move === 1 && (index % 8 === 7)) return; // Right edge
+                        if (initialBoard[newIndex] === '' || initialBoard[newIndex].toLowerCase() !== piece.toLowerCase()) {
+                            moves.push(newIndex);
+                        }
+                    }
+                });
+            }
+
+            return moves;
         }
 
         function renderBoard() {
