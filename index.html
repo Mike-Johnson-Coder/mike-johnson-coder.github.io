@@ -3,249 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Multiplayer Chess</title>
+    <title>Simple Calculator</title>
     <style>
         body {
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #f0f0f0;
+            background-color: #f4f4f4;
+            font-family: Arial, sans-serif;
         }
-        #board {
+
+        .calculator {
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #display {
+            width: 100%;
+            height: 40px;
+            font-size: 24px;
+            text-align: right;
+            margin-bottom: 10px;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .buttons {
             display: grid;
-            grid-template-columns: repeat(8, 60px);
-            grid-template-rows: repeat(8, 60px);
-            border: 2px solid #333;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
         }
-        .square {
-            width: 60px;
-            height: 60px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 2em;
+
+        button {
+            padding: 20px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
             cursor: pointer;
         }
-        .white {
-            background-color: #eee;
-        }
-        .black {
-            background-color: #333;
-            color: white;
-        }
-        .highlight {
-            background-color: yellow;
-        }
-        .selected {
-            border: 2px solid red;
+
+        button:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
 <body>
-    <div id="board"></div>
+    <div class="calculator">
+        <input type="text" id="display" disabled>
+        <div class="buttons">
+            <button onclick="clearDisplay()">C</button>
+            <button onclick="appendToDisplay('7')">7</button>
+            <button onclick="appendToDisplay('8')">8</button>
+            <button onclick="appendToDisplay('9')">9</button>
+            <button onclick="appendToDisplay('/')">/</button>
+            <button onclick="appendToDisplay('4')">4</button>
+            <button onclick="appendToDisplay('5')">5</button>
+            <button onclick="appendToDisplay('6')">6</button>
+            <button onclick="appendToDisplay('*')">*</button>
+            <button onclick="appendToDisplay('1')">1</button>
+            <button onclick="appendToDisplay('2')">2</button>
+            <button onclick="appendToDisplay('3')">3</button>
+            <button onclick="appendToDisplay('-')">-</button>
+            <button onclick="appendToDisplay('0')">0</button>
+            <button onclick="calculateResult()">=</button>
+            <button onclick="appendToDisplay('+')">+</button>
+        </div>
+    </div>
     <script>
-        const board = document.getElementById('board');
-        const initialBoard = [
-            'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r',
-            'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p',
-            '', '', '', '', '', '', '', '',
-            '', '', '', '', '', '', '', '',
-            '', '', '', '', '', '', '', '',
-            '', '', '', '', '', '', '', '',
-            'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P',
-            'R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'
-        ];
-
-        let selectedSquare = null;
-        let currentPlayer = 'white';
-
-        function createBoard() {
-            initialBoard.forEach((piece, index) => {
-                const square = document.createElement('div');
-                square.className = 'square ' + ((Math.floor(index / 8) + index) % 2 === 0 ? 'white' : 'black');
-                square.dataset.index = index;
-                square.innerHTML = piece ? piece : '';
-                square.addEventListener('click', () => handleSquareClick(square, piece));
-                board.appendChild(square);
-            });
+        function appendToDisplay(value) {
+            document.getElementById('display').value += value;
         }
 
-        function handleSquareClick(square, piece) {
-            const index = square.dataset.index;
-
-            if (selectedSquare) {
-                const selectedPiece = initialBoard[selectedSquare.dataset.index];
-                if (isValidMove(selectedPiece, index)) {
-                    initialBoard[index] = selectedPiece;
-                    initialBoard[selectedSquare.dataset.index] = '';
-                    renderBoard();
-                    currentPlayer = currentPlayer === 'white' ? 'black' : 'white';
-                }
-                clearHighlights();
-                selectedSquare.classList.remove('selected');
-                selectedSquare = null;
-            } else {
-                if (piece && (currentPlayer === 'white' ? piece === piece.toUpperCase() : piece === piece.toLowerCase())) {
-                    selectedSquare = square;
-                    selectedSquare.classList.add('selected');
-                    highlightValidMoves(selectedSquare.dataset.index, piece);
-                }
-            }
+        function clearDisplay() {
+            document.getElementById('display').value = '';
         }
 
-        function highlightValidMoves(index, piece) {
-            const validMoves = getValidMoves(index, piece);
-            validMoves.forEach(move => {
-                const square = document.querySelector(`.square[data-index='${move}']`);
-                if (square) {
-                    square.classList.add('highlight');
-                }
-            });
+        function calculateResult() {
+            const display = document.getElementById('display');
+            try {
+                display.value = eval(display.value);
+            } catch (error) {
+                display.value = 'Error';
+            }
         }
-
-        function clearHighlights() {
-            const highlightedSquares = document.querySelectorAll('.highlight');
-            highlightedSquares.forEach(square => {
-                square.classList.remove('highlight');
-            });
-        }
-
-        function getValidMoves(index, piece) {
-            const moves = [];
-            const row = Math.floor(index / 8);
-            const col = index % 8;
-
-            // Pawn movement
-            if (piece.toLowerCase() === 'p') {
-                const direction = piece === 'P' ? -1 : 1;
-                const startRow = piece === 'P' ? 6 : 1;
-
-                // Move forward
-                if (initialBoard[index + direction * 8] === '') {
-                    moves.push(index + direction * 8);
-                }
-                // Double move from starting position
-                if (row === startRow && initialBoard[index
-                if (row === startRow && initialBoard[index + direction * 16] === '') {
-                    moves.push(index + direction * 16);
-                }
-                // Capture diagonally
-                if (initialBoard[index + direction * 8 - 1] && initialBoard[index + direction * 8 - 1].toLowerCase() !== piece.toLowerCase()) {
-                    moves.push(index + direction * 8 - 1);
-                }
-                if (initialBoard[index + direction * 8 + 1] && initialBoard[index + direction * 8 + 1].toLowerCase() !== piece.toLowerCase()) {
-                    moves.push(index + direction * 8 + 1);
-                }
-            }
-
-            // Rook movement
-            if (piece.toLowerCase() === 'r') {
-                const directions = [-1, 1, -8, 8]; // left, right, up, down
-                directions.forEach(dir => {
-                    for (let i = 1; i < 8; i++) {
-                        const newIndex = index + dir * i;
-                        if (newIndex < 0 || newIndex >= 64) break; // Out of bounds
-                        if (dir === -1 && (newIndex % 8 === 7)) break; // Left edge
-                        if (dir === 1 && (newIndex % 8 === 0)) break; // Right edge
-                        if (initialBoard[newIndex] === '') {
-                            moves.push(newIndex);
-                        } else {
-                            if (initialBoard[newIndex].toLowerCase() !== piece.toLowerCase()) {
-                                moves.push(newIndex);
-                            }
-                            break; // Stop if we hit a piece
-                        }
-                    }
-                });
-            }
-
-            // Knight movement
-            if (piece.toLowerCase() === 'n') {
-                const knightMoves = [-17, -15, -10, -6, 6, 10, 15, 17];
-                knightMoves.forEach(move => {
-                    const newIndex = index + move;
-                    if (newIndex >= 0 && newIndex < 64) {
-                        if (move === -17 && (index % 8 === 0)) return; // Left edge
-                        if (move === -15 && (index % 8 === 7)) return; // Right edge
-                        if (move === 6 && (index % 8 === 7)) return; // Right edge
-                        if (move === 10 && (index % 8 === 0)) return; // Left edge
-                        if (initialBoard[newIndex] === '' || initialBoard[newIndex].toLowerCase() !== piece.toLowerCase()) {
-                            moves.push(newIndex);
-                        }
-                    }
-                });
-            }
-
-            // Bishop movement
-            if (piece.toLowerCase() === 'b') {
-                const directions = [-9, -7, 7, 9]; // diagonal directions
-                directions.forEach(dir => {
-                    for (let i = 1; i < 8; i++) {
-                        const newIndex = index + dir * i;
-                        if (newIndex < 0 || newIndex >= 64) break; // Out of bounds
-                        if (dir === -9 && (newIndex % 8 === 7)) break; // Right edge
-                        if (dir === -7 && (newIndex % 8 === 0)) break; // Left edge
-                        if (initialBoard[newIndex] === '') {
-                            moves.push(newIndex);
-                        } else {
-                            if (initialBoard[newIndex].toLowerCase() !== piece.toLowerCase()) {
-                                moves.push(newIndex);
-                            }
-                            break; // Stop if we hit a piece
-                        }
-                    }
-                });
-            }
-
-            // Queen movement
-            if (piece.toLowerCase() === 'q') {
-                const directions = [-1, 1, -8, 8, -9, -7, 7, 9]; // all directions
-                directions.forEach(dir => {
-                    for (let i = 1; i < 8; i++) {
-                        const newIndex = index + dir * i;
-                        if (newIndex < 0 || newIndex >= 64) break; // Out of bounds
-                        if (dir === -1 && (newIndex % 8 === 7)) break; // Left edge
-                        if (dir === 1 && (newIndex % 8 === 0)) break; // Right edge
-                        if (initialBoard[newIndex] === '') {
-                            moves.push(newIndex);
-                        } else {
-                            if (initialBoard[newIndex].toLowerCase() !== piece.toLower
-                            if (initialBoard[newIndex].toLowerCase() !== piece.toLowerCase()) {
-                                moves.push(newIndex);
-                            }
-                            break; // Stop if we hit a piece
-                        }
-                    }
-                });
-            }
-
-            // King movement
-            if (piece.toLowerCase() === 'k') {
-                const kingMoves = [-1, 1, -8, 8, -9, -7, 7, 9]; // all directions
-                kingMoves.forEach(move => {
-                    const newIndex = index + move;
-                    if (newIndex >= 0 && newIndex < 64) {
-                        if (move === -1 && (index % 8 === 0)) return; // Left edge
-                        if (move === 1 && (index % 8 === 7)) return; // Right edge
-                        if (initialBoard[newIndex] === '' || initialBoard[newIndex].toLowerCase() !== piece.toLowerCase()) {
-                            moves.push(newIndex);
-                        }
-                    }
-                });
-            }
-
-            return moves;
-        }
-
-        function renderBoard() {
-            const squares = document.querySelectorAll('.square');
-            squares.forEach((square, index) => {
-                square.innerHTML = initialBoard[index] ? initialBoard[index] : '';
-            });
-        }
-
-        createBoard();
     </script>
 </body>
 </html>
