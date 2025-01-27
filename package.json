@@ -1,0 +1,12 @@
+{
+  "name": "mike-johnson-coder.github.io",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "echo \"No build step defined\"",
+    "test": "echo \"No tests defined\""
+  },
+  "author": "",
+  "license": "ISC"
+}
