@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vending Machine Simulation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+
+        .vending-machine {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .items {
+            margin-bottom: 20px;
+        }
+
+        .item {
+            margin: 5px;
+            padding: 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .item:hover {
+            background-color: #0056b3;
+        }
+
+        #message {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="vending-machine">
+        <h1>Vending Machine</h1>
+        <div class="items">
+            <button class="item" data-price="1.50">Item 1 - $1.50</button>
+            <button class="item" data-price="2.00">Item 2 - $2.00</button>
+            <button class="item" data-price="2.50">Item 3 - $2.50</button>
+        </div>
+        <input type="number" id="moneyInput" placeholder="Insert money" />
+        <button id="buyButton">Buy</button>
+        <div id="message"></div>
+    </div>
+
+    <script>
+        document.getElementById('buyButton').addEventListener('click', function() {
+            const moneyInput = document.getElementById('moneyInput');
+            const message = document.getElementById('message');
+            const selectedItem = document.querySelector('.item.selected');
+
+            if (!selectedItem) {
+                message.textContent = 'Please select an item.';
+                return;
+            }
+
+            const itemPrice = parseFloat(selectedItem.getAttribute('data-price'));
+            const moneyInserted = parseFloat(moneyInput.value);
+
+            if (moneyInserted < itemPrice) {
+                message.textContent = 'Not enough money!';
+            } else {
+                message.textContent = 'Thank you for your purchase!';
+            }
+        });
+
+        // Add event listeners to items
+        document.querySelectorAll('.item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.item').forEach(i => i.classList.remove('selected'));
+                item.classList.add('selected');
+            });
+        });
+    </script>
+</body>
+</html>
