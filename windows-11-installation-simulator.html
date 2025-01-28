@@ -58,7 +58,7 @@
             background-color: #007bff;
         }
 
-        input[type="text"] {
+        input[type="text"], input[type="password"] {
             padding: 10px;
             margin: 10px 0;
             width: 80%;
@@ -85,14 +85,20 @@
 
         <div id="step2" class="step hidden">
             <h2>Check System Compatibility</h2>
-            <p>Use the PC Health Check app to verify if your device meets the minimum system requirements for Windows 11.</p>
-            <button onclick="nextStep(3)">Next</button>
+            <p>Checking if your device meets the minimum system requirements for Windows 11...</p>
+            <div class="progress-bar">
+                <div id="compatibilityProgress" class="progress"></div>
+            </div>
+            <p id="compatibilityText">0%</p>
         </div>
 
         <div id="step3" class="step hidden">
             <h2>Backup Data</h2>
-            <p>Ensure you back up all important files and data before proceeding with the installation.</p>
-            <button onclick="nextStep(4)">Next</button>
+            <p>Backing up all important files and data...</p>
+            <div class="progress-bar">
+                <div id="backupProgress" class="progress"></div>
+            </div>
+            <p id="backupText">0%</p>
         </div>
 
         <div id="step4" class="step hidden">
@@ -151,16 +157,17 @@
             <h2>Complete Installation</h2>
             <p>Follow the remaining prompts to complete the installation process. This may take some time.</p>
             <div class="progress-bar">
-                <div id="progress" class="progress"></div>
+                <div id="installationProgress" class="progress"></div>
             </div>
-            <p id="progress-text">0%</p>
+            <p id="installationText">0%</p>
         </div>
 
         <div id="step12" class="step hidden">
             <h2>Post-Installation Setup</h2>
             <p>Create your Windows 11 account:</p>
             <input type="text" id="accountName" placeholder="Enter your account name">
-            <input type="text" id="accountPassword" placeholder="Enter your account password">
+            <input type="password" id="accountPassword" placeholder="Enter your account password">
+            <input type="checkbox" id="showPassword" onclick="togglePassword()"> Show Password
             <button onclick="nextStep(13)">Next</button>
         </div>
 
@@ -180,25 +187,39 @@
             // Show the current step
             document.getElementById('step' + step).classList.remove('hidden');
 
-            // Simulate installation progress
-            if (step === 11) {
-                simulateInstallation();
+            // Simulate different processes
+            if (step === 2) {
+                simulateProgress('compatibilityProgress', 'compatibilityText', 3);
+            } else if (step === 3) {
+                simulateProgress('backupProgress', 'backupText', 4);
+            } else if (step === 11) {
+                simulateProgress('installationProgress', 'installationText', 12);
             }
         }
 
-        function simulateInstallation() {
+        function simulateProgress(progressId, textId, nextStep) {
             let progress = 0;
-            const progressBar = document.getElementById('progress');
-            const progressText = document.getElementById('progress-text');
+            const progressBar = document.getElementById(progressId);
+            const progressText = document.getElementById(textId);
             const interval = setInterval(() => {
                 progress += 1;
                 progressBar.style.width = progress + '%';
                 progressText.textContent = progress + '%';
                 if (progress >= 100) {
                     clearInterval(interval);
-                    nextStep(12);
+                    nextStep(nextStep);
                 }
-            }, 100);
+            }, 50); // Speed up the simulation for demo purposes
+        }
+
+        function togglePassword() {
+            const passwordField = document.getElementById('accountPassword');
+            const showPassword = document.getElementById('showPassword');
+            if (showPassword.checked) {
+                passwordField.type = 'text';
+            } else {
+                passwordField.type = 'password';
+            }
         }
 
         function restartSimulation() {
