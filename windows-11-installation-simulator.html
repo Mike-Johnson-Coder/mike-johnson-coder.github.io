@@ -57,6 +57,22 @@
             height: 30px;
             background-color: #007bff;
         }
+
+        input[type="text"] {
+            padding: 10px;
+            margin: 10px 0;
+            width: 80%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        select {
+            padding: 10px;
+            margin: 10px 0;
+            width: 80%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
@@ -87,37 +103,47 @@
 
         <div id="step5" class="step hidden">
             <h2>Create Bootable USB Drive</h2>
-            <p>Use the Media Creation Tool to create a bootable USB drive.</p>
+            <p>Use the Media Creation Tool to create a bootable USB drive. Insert your USB drive and select it in the tool to download Windows 11 and create a bootable installation media.</p>
             <button onclick="nextStep(6)">Next</button>
         </div>
 
         <div id="step6" class="step hidden">
             <h2>Boot from USB Drive</h2>
-            <p>Insert the USB drive into your computer and restart it. Access the boot menu and select the USB drive as the boot device.</p>
+            <p>Insert the USB drive into your computer and restart it. Access the boot menu (usually by pressing F12, F2, or Del) and select the USB drive as the boot device.</p>
             <button onclick="nextStep(7)">Next</button>
         </div>
 
         <div id="step7" class="step hidden">
             <h2>Start Installation</h2>
-            <p>Select your language preferences and click “Next” to start the installation process.</p>
+            <p>Once the Windows Setup screen appears, select your language preferences and click “Next”. Follow the on-screen instructions to start the installation process.</p>
             <button onclick="nextStep(8)">Next</button>
         </div>
 
         <div id="step8" class="step hidden">
             <h2>Choose Installation Type</h2>
-            <p>Select the installation type: Full Upgrade, Keep Data Only, or Clean Install.</p>
+            <p>Select the installation type:</p>
+            <select id="installationType">
+                <option value="Full Upgrade">Keep personal files, apps, and Windows settings (Full Upgrade)</option>
+                <option value="Keep Data Only">Keep personal files only (Keep Data Only)</option>
+                <option value="Clean Install">Clean Install (removes all data and settings)</option>
+            </select>
             <button onclick="nextStep(9)">Next</button>
         </div>
 
         <div id="step9" class="step hidden">
             <h2>Accept License Terms</h2>
             <p>Read and accept the license terms before proceeding with the installation.</p>
-            <button onclick="nextStep(10)">Next</button>
+            <button onclick="nextStep(10)">Accept</button>
         </div>
 
         <div id="step10" class="step hidden">
             <h2>Select Installation Location</h2>
             <p>Choose the drive where you want to install Windows 11.</p>
+            <select id="installationDrive">
+                <option value="Drive 0">Drive 0</option>
+                <option value="Drive 1">Drive 1</option>
+                <option value="Drive 2">Drive 2</option>
+            </select>
             <button onclick="nextStep(11)">Next</button>
         </div>
 
@@ -132,7 +158,9 @@
 
         <div id="step12" class="step hidden">
             <h2>Post-Installation Setup</h2>
-            <p>Set up your Windows 11 account, configure settings, and install any necessary drivers or updates.</p>
+            <p>Create your Windows 11 account:</p>
+            <input type="text" id="accountName" placeholder="Enter your account name">
+            <input type="text" id="accountPassword" placeholder="Enter your account password">
             <button onclick="nextStep(13)">Next</button>
         </div>
 
