@@ -7,6 +7,7 @@
     <style>
         body {
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
@@ -52,6 +53,20 @@
         button:hover {
             background-color: #0056b3;
         }
+
+        .nav-links {
+            margin-top: 20px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #007bff;
+            font-size: 18px;
+        }
+
+        .nav-links a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -75,6 +90,9 @@
             <button onclick="calculateResult()">=</button>
             <button onclick="appendToDisplay('+')">+</button>
         </div>
+    </div>
+    <div class="nav-links">
+        <a href="simulator.html">Go to Vending Machine Simulator</a>
     </div>
     <script>
         function appendToDisplay(value) {
