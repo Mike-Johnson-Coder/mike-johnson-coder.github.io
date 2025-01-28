@@ -12,10 +12,11 @@
             align-items: center;
             height: 100vh;
             background-color: #f0f0f0;
+            margin: 0;
         }
 
         .simulator {
-            width: 500px;
+            width: 600px;
             padding: 20px;
             border-radius: 10px;
             background: white;
@@ -44,6 +45,18 @@
         button:hover {
             background-color: #0056b3;
         }
+
+        .progress-bar {
+            width: 100%;
+            background-color: #eee;
+            margin: 20px 0;
+        }
+
+        .progress {
+            width: 0;
+            height: 30px;
+            background-color: #007bff;
+        }
     </style>
 </head>
 <body>
@@ -51,46 +64,96 @@
         <div id="step1" class="step">
             <h2>Welcome to Windows 11 Installation</h2>
             <p>Click Next to begin the installation process.</p>
-            <button onclick="showStep(2)">Next</button>
+            <button onclick="nextStep(2)">Next</button>
         </div>
 
         <div id="step2" class="step hidden">
-            <h2>License Agreement</h2>
-            <p>Please read and accept the license agreement.</p>
-            <button onclick="showStep(3)">Accept</button>
+            <h2>Check System Compatibility</h2>
+            <p>Use the PC Health Check app to verify if your device meets the minimum system requirements for Windows 11.</p>
+            <button onclick="nextStep(3)">Next</button>
         </div>
 
         <div id="step3" class="step hidden">
-            <h2>Choose Installation Type</h2>
-            <p>Select the type of installation you want to perform.</p>
-            <button onclick="showStep(4)">Upgrade</button>
-            <button onclick="showStep(4)">Custom</button>
+            <h2>Backup Data</h2>
+            <p>Ensure you back up all important files and data before proceeding with the installation.</p>
+            <button onclick="nextStep(4)">Next</button>
         </div>
 
         <div id="step4" class="step hidden">
-            <h2>Installing Windows 11</h2>
-            <p>Installation is in progress, please wait...</p>
-            <div id="progressBar" style="width: 100%; background-color: #eee; margin: 20px 0;">
-                <div id="progress" style="width: 0; height: 30px; background-color: #007bff;"></div>
-            </div>
-            <p id="progressText">0%</p>
+            <h2>Download Installation Media</h2>
+            <p>Go to the Microsoft Windows 11 download page and download the Media Creation Tool.</p>
+            <button onclick="nextStep(5)">Next</button>
         </div>
 
         <div id="step5" class="step hidden">
-            <h2>Installation Complete</h2>
-            <p>Windows 11 has been successfully installed. Click Finish to restart.</p>
-            <button onclick="location.reload()">Finish</button>
+            <h2>Create Bootable USB Drive</h2>
+            <p>Use the Media Creation Tool to create a bootable USB drive.</p>
+            <button onclick="nextStep(6)">Next</button>
+        </div>
+
+        <div id="step6" class="step hidden">
+            <h2>Boot from USB Drive</h2>
+            <p>Insert the USB drive into your computer and restart it. Access the boot menu and select the USB drive as the boot device.</p>
+            <button onclick="nextStep(7)">Next</button>
+        </div>
+
+        <div id="step7" class="step hidden">
+            <h2>Start Installation</h2>
+            <p>Select your language preferences and click “Next” to start the installation process.</p>
+            <button onclick="nextStep(8)">Next</button>
+        </div>
+
+        <div id="step8" class="step hidden">
+            <h2>Choose Installation Type</h2>
+            <p>Select the installation type: Full Upgrade, Keep Data Only, or Clean Install.</p>
+            <button onclick="nextStep(9)">Next</button>
+        </div>
+
+        <div id="step9" class="step hidden">
+            <h2>Accept License Terms</h2>
+            <p>Read and accept the license terms before proceeding with the installation.</p>
+            <button onclick="nextStep(10)">Next</button>
+        </div>
+
+        <div id="step10" class="step hidden">
+            <h2>Select Installation Location</h2>
+            <p>Choose the drive where you want to install Windows 11.</p>
+            <button onclick="nextStep(11)">Next</button>
+        </div>
+
+        <div id="step11" class="step hidden">
+            <h2>Complete Installation</h2>
+            <p>Follow the remaining prompts to complete the installation process. This may take some time.</p>
+            <div class="progress-bar">
+                <div id="progress" class="progress"></div>
+            </div>
+            <p id="progress-text">0%</p>
+        </div>
+
+        <div id="step12" class="step hidden">
+            <h2>Post-Installation Setup</h2>
+            <p>Set up your Windows 11 account, configure settings, and install any necessary drivers or updates.</p>
+            <button onclick="nextStep(13)">Next</button>
+        </div>
+
+        <div id="step13" class="step hidden">
+            <h2>Check for Updates</h2>
+            <p>Check for and install any available updates to ensure your system is up-to-date and secure.</p>
+            <button onclick="restartSimulation()">Finish</button>
         </div>
     </div>
 
     <script>
-        function showStep(step) {
-            for (let i = 1; i <= 5; i++) {
+        function nextStep(step) {
+            // Hide all steps
+            for (let i = 1; i <= 13; i++) {
                 document.getElementById('step' + i).classList.add('hidden');
             }
+            // Show the current step
             document.getElementById('step' + step).classList.remove('hidden');
 
-            if (step === 4) {
+            // Simulate installation progress
+            if (step === 11) {
                 simulateInstallation();
             }
         }
@@ -98,16 +161,20 @@
         function simulateInstallation() {
             let progress = 0;
             const progressBar = document.getElementById('progress');
-            const progressText = document.getElementById('progressText');
+            const progressText = document.getElementById('progress-text');
             const interval = setInterval(() => {
                 progress += 1;
                 progressBar.style.width = progress + '%';
                 progressText.textContent = progress + '%';
                 if (progress >= 100) {
                     clearInterval(interval);
-                    showStep(5);
+                    nextStep(12);
                 }
             }, 100);
+        }
+
+        function restartSimulation() {
+            location.reload();
         }
     </script>
 </body>
