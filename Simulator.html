@@ -39,6 +39,11 @@
             background-color: #0056b3;
         }
 
+        .item.selected {
+            background-color: #0056b3;
+            border: 2px solid #003f7f;
+        }
+
         #message {
             margin-top: 10px;
             font-weight: bold;
@@ -53,7 +58,7 @@
             <button class="item" data-price="2.00">Item 2 - $2.00</button>
             <button class="item" data-price="2.50">Item 3 - $2.50</button>
         </div>
-        <input type="number" id="moneyInput" placeholder="Insert money" />
+        <input type="number" id="moneyInput" placeholder="Insert money" step="0.01" />
         <button id="buyButton">Buy</button>
         <div id="message"></div>
     </div>
@@ -71,6 +76,11 @@
 
             const itemPrice = parseFloat(selectedItem.getAttribute('data-price'));
             const moneyInserted = parseFloat(moneyInput.value);
+
+            if (isNaN(moneyInserted) || moneyInserted <= 0) {
+                message.textContent = 'Please insert a valid amount of money.';
+                return;
+            }
 
             if (moneyInserted < itemPrice) {
                 message.textContent = 'Not enough money!';
