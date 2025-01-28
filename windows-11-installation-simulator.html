@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Windows 11 Installation Simulator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+
+        .simulator {
+            width: 500px;
+            padding: 20px;
+            border-radius: 10px;
+            background: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .step {
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="simulator">
+        <div id="step1" class="step">
+            <h2>Welcome to Windows 11 Installation</h2>
+            <p>Click Next to begin the installation process.</p>
+            <button onclick="showStep(2)">Next</button>
+        </div>
+
+        <div id="step2" class="step hidden">
+            <h2>License Agreement</h2>
+            <p>Please read and accept the license agreement.</p>
+            <button onclick="showStep(3)">Accept</button>
+        </div>
+
+        <div id="step3" class="step hidden">
+            <h2>Choose Installation Type</h2>
+            <p>Select the type of installation you want to perform.</p>
+            <button onclick="showStep(4)">Upgrade</button>
+            <button onclick="showStep(4)">Custom</button>
+        </div>
+
+        <div id="step4" class="step hidden">
+            <h2>Installing Windows 11</h2>
+            <p>Installation is in progress, please wait...</p>
+            <div id="progressBar" style="width: 100%; background-color: #eee; margin: 20px 0;">
+                <div id="progress" style="width: 0; height: 30px; background-color: #007bff;"></div>
+            </div>
+            <p id="progressText">0%</p>
+        </div>
+
+        <div id="step5" class="step hidden">
+            <h2>Installation Complete</h2>
+            <p>Windows 11 has been successfully installed. Click Finish to restart.</p>
+            <button onclick="location.reload()">Finish</button>
+        </div>
+    </div>
+
+    <script>
+        function showStep(step) {
+            for (let i = 1; i <= 5; i++) {
+                document.getElementById('step' + i).classList.add('hidden');
+            }
+            document.getElementById('step' + step).classList.remove('hidden');
+
+            if (step === 4) {
+                simulateInstallation();
+            }
+        }
+
+        function simulateInstallation() {
+            let progress = 0;
+            const progressBar = document.getElementById('progress');
+            const progressText = document.getElementById('progressText');
+            const interval = setInterval(() => {
+                progress += 1;
+                progressBar.style.width = progress + '%';
+                progressText.textContent = progress + '%';
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    showStep(5);
+                }
+            }, 100);
+        }
+    </script>
+</body>
+</html>
