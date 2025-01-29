@@ -6,30 +6,53 @@
     <title>Windows 11 Installation Simulator</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1b1b1b;
+            color: white;
+            margin: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #f0f0f0;
-            margin: 0;
         }
 
         .simulator {
             width: 600px;
             padding: 20px;
             border-radius: 10px;
-            background: white;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background: #2d2d2d;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
             text-align: center;
         }
 
-        .hidden {
-            display: none;
+        .header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .header img {
+            width: 50px;
+            height: 50px;
+        }
+
+        .header h2 {
+            margin: 0;
+            font-size: 24px;
         }
 
         .step {
             margin-bottom: 20px;
+        }
+
+        .step h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .step p {
+            font-size: 16px;
         }
 
         button {
@@ -37,54 +60,58 @@
             margin: 5px;
             border: none;
             border-radius: 5px;
-            background-color: #007bff;
+            background-color: #0078d4;
             color: white;
             cursor: pointer;
         }
 
         button:hover {
-            background-color: #0056b3;
+            background-color: #005a9e;
         }
 
         .progress-bar {
             width: 100%;
-            background-color: #eee;
+            background-color: #3a3a3a;
             margin: 20px 0;
+            border-radius: 5px;
+            overflow: hidden;
         }
 
         .progress {
             width: 0;
             height: 30px;
-            background-color: #007bff;
+            background-color: #0078d4;
         }
 
-        input[type="text"], input[type="password"] {
+        input[type="text"], input[type="password"], select {
             padding: 10px;
             margin: 10px 0;
-            width: 80%;
-            border: 1px solid #ccc;
+            width: 100%;
+            border: 1px solid #6a6a6a;
             border-radius: 5px;
+            background-color: #1b1b1b;
+            color: white;
         }
 
-        select {
-            padding: 10px;
+        input[type="checkbox"] {
             margin: 10px 0;
-            width: 80%;
-            border: 1px solid #ccc;
-            border-radius: 5px;
         }
     </style>
 </head>
 <body>
     <div class="simulator">
+        <div class="header">
+            <img src="https://imgs.search.brave.com/JI93IPLxGtUoZE_kdlF5SJqvHx9dIdlRxQQbziNvqvE/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jeGNz/Lm1pY3Jvc29mdC5u/ZXQvc3RhdGljL3B1/YmxpYy93aW5kb3dz/L25ldXRyYWwvYzVm/YWUwMDctOGE0OC00/YWJkLWJjNWUtZjFi/MTRmNzMwMmJjLzU4/ZmFlYjMxNDk3ZGQ0/NTZlYmU1YWRiZGE2/NDgxOTAxNGJjYzg5/ZTcucG5n" alt="Windows 11 Logo">
+            <h2>Windows Setup</h2>
+        </div>
         <div id="step1" class="step">
-            <h2>Welcome to Windows 11 Installation</h2>
+            <h3>Welcome to Windows 11 Installation</h3>
             <p>Click Next to begin the installation process.</p>
             <button onclick="nextStep(2)">Next</button>
         </div>
 
         <div id="step2" class="step hidden">
-            <h2>Check System Compatibility</h2>
+            <h3>Check System Compatibility</h3>
             <p>Checking if your device meets the minimum system requirements for Windows 11...</p>
             <div class="progress-bar">
                 <div id="compatibilityProgress" class="progress"></div>
@@ -94,7 +121,7 @@
         </div>
 
         <div id="step3" class="step hidden">
-            <h2>Backup Data</h2>
+            <h3>Backup Data</h3>
             <p>Backing up all important files and data...</p>
             <div class="progress-bar">
                 <div id="backupProgress" class="progress"></div>
@@ -103,59 +130,41 @@
         </div>
 
         <div id="step4" class="step hidden">
-            <h2>Download Installation Media</h2>
-            <p>Go to the Microsoft Windows 11 download page and download the Media Creation Tool.</p>
+            <h3>Start Installation</h3>
+            <p>Once the Windows Setup screen appears, select your language preferences and click “Next”. Follow the on-screen instructions to start the installation process.</p>
             <button onclick="nextStep(5)">Next</button>
         </div>
 
         <div id="step5" class="step hidden">
-            <h2>Create Bootable USB Drive</h2>
-            <p>Use the Media Creation Tool to create a bootable USB drive. Insert your USB drive and select it in the tool to download Windows 11 and create a bootable installation media.</p>
-            <button onclick="nextStep(6)">Next</button>
-        </div>
-
-        <div id="step6" class="step hidden">
-            <h2>Boot from USB Drive</h2>
-            <p>Insert the USB drive into your computer and restart it. Access the boot menu (usually by pressing F12, F2, or Del) and select the USB drive as the boot device.</p>
-            <button onclick="nextStep(7)">Next</button>
-        </div>
-
-        <div id="step7" class="step hidden">
-            <h2>Start Installation</h2>
-            <p>Once the Windows Setup screen appears, select your language preferences and click “Next”. Follow the on-screen instructions to start the installation process.</p>
-            <button onclick="nextStep(8)">Next</button>
-        </div>
-
-        <div id="step8" class="step hidden">
-            <h2>Choose Installation Type</h2>
+            <h3>Choose Installation Type</h3>
             <p>Select the installation type:</p>
             <select id="installationType">
                 <option value="Full Upgrade">Keep personal files, apps, and Windows settings (Full Upgrade)</option>
                 <option value="Keep Data Only">Keep personal files only (Keep Data Only)</option>
                 <option value="Clean Install">Clean Install (removes all data and settings)</option>
             </select>
-            <button onclick="nextStep(9)">Next</button>
+            <button onclick="nextStep(6)">Next</button>
         </div>
 
-        <div id="step9" class="step hidden">
-            <h2>Accept License Terms</h2>
+        <div id="step6" class="step hidden">
+            <h3>Accept License Terms</h3>
             <p>Read and accept the license terms before proceeding with the installation.</p>
-            <button onclick="nextStep(10)">Accept</button>
+            <button onclick="nextStep(7)">Accept</button>
         </div>
 
-        <div id="step10" class="step hidden">
-            <h2>Select Installation Location</h2>
+        <div id="step7" class="step hidden">
+            <h3>Select Installation Location</h3>
             <p>Choose the drive where you want to install Windows 11.</p>
             <select id="installationDrive">
                 <option value="Drive 0">Drive 0</option>
                 <option value="Drive 1">Drive 1</option>
                 <option value="Drive 2">Drive 2</option>
             </select>
-            <button onclick="nextStep(11)">Next</button>
+            <button onclick="nextStep(8)">Next</button>
         </div>
 
-        <div id="step11" class="step hidden">
-            <h2>Complete Installation</h2>
+        <div id="step8" class="step hidden">
+            <h3>Complete Installation</h3>
             <p>Follow the remaining prompts to complete the installation process. This may take some time.</p>
             <div class="progress-bar">
                 <div id="installationProgress" class="progress"></div>
@@ -163,17 +172,17 @@
             <p id="installationText">0%</p>
         </div>
 
-        <div id="step12" class="step hidden">
-            <h2>Post-Installation Setup</h2>
+        <div id="step9" class="step hidden">
+            <h3>Post-Installation Setup</h3>
             <p>Create your Windows 11 account:</p>
             <input type="text" id="accountName" placeholder="Enter your account name">
             <input type="password" id="accountPassword" placeholder="Enter your account password">
             <input type="checkbox" id="showPassword" onclick="togglePassword()"> Show Password
-            <button onclick="nextStep(13)">Next</button>
+            <button onclick="nextStep(10)">Next</button>
         </div>
 
-        <div id="step13" class="step hidden">
-            <h2>Check for Updates</h2>
+        <div id="step10" class="step hidden">
+            <h3>Check for Updates</h3>
             <p>Check for and install any available updates to ensure your system is up-to-date and secure.</p>
             <button onclick="restartSimulation()">Finish</button>
         </div>
@@ -182,7 +191,7 @@
     <script>
         function nextStep(step) {
             // Hide all steps
-            for (let i = 1; i <= 13; i++) {
+            for (let i = 1; i <= 10; i++) {
                 document.getElementById('step' + i).classList.add('hidden');
             }
             // Show the current step
@@ -192,9 +201,9 @@
             if (step === 2) {
                 simulateProgress('compatibilityProgress', 'compatibilityText', 'compatibilityResult', () => nextStep(3));
             } else if (step === 3) {
-                simulateProgress('backupProgress', 'backupText', '', () => nextStep(4));
-            } else if (step === 11) {
-                simulateProgress('installationProgress', 'installationText', '', () => nextStep(12));
+                simulateProgress('backupProgress', 'backupText', null, () => nextStep(4));
+            } else if (step === 8) {
+                simulateProgress('installationProgress', 'installationText', null, () => nextStep(9));
             }
         }
 
