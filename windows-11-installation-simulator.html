@@ -239,7 +239,7 @@
     let progress = 0;
     const progressBar = document.getElementById(progressId);
     const progressText = document.getElementById(textId);
-    const increment = 100 / (duration / 200); // Adjust the increment based on the duration
+    const increment = 100 / (duration / 100); // Adjust the increment based on the duration
 
     const interval = setInterval(() => {
         progress += increment;
@@ -271,7 +271,7 @@
                     }
                     setTimeout(callback, 1000);
                 }
-            }, 50); // Speed up the simulation for demo purposes
+            }, 200); // Speed up the simulation for demo purposes
         }
 
         function togglePassword() {
