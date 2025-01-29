@@ -235,14 +235,26 @@
             document.getElementById('step' + step).classList.add('active');
 
             // Simulate different processes
-            if (step === 2) {
-                simulateProgress('compatibilityProgress', 'compatibilityText', 'compatibilityResult', () => nextStep(3));
-            } else if (step === 3) {
-                simulateProgress('backupProgress', 'backupText', null, () => nextStep(4));
-            } else if (step === 8) {
-                simulateProgress('installationProgress', 'installationText', null, () => nextStep(9));
+           function simulateProgress(progressId, textId, resultId, duration, callback) {
+    let progress = 0;
+    const progressBar = document.getElementById(progressId);
+    const progressText = document.getElementById(textId);
+    const increment = 100 / (duration / 200); // Adjust the increment based on the duration
+
+    const interval = setInterval(() => {
+        progress += increment;
+        if (progress >= 100) {
+            progress = 100;
+            clearInterval(interval); // Clear interval when progress reaches 100%
+            if (resultId) {
+                document.getElementById(resultId).classList.remove('hidden');
             }
+            setTimeout(callback, 1000); // Delay before next step
         }
+        progressBar.style.width = progress + '%';
+        progressText.textContent = Math.round(progress) + '%';
+    }, 100); // Update interval in milliseconds
+}
 
         function simulateProgress(progressId, textId, resultId, callback) {
             let progress = 0;
