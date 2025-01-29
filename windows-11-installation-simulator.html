@@ -190,15 +190,15 @@
 
             // Simulate different processes
             if (step === 2) {
-                simulateProgress('compatibilityProgress', 'compatibilityText', 'compatibilityResult', 3);
+                simulateProgress('compatibilityProgress', 'compatibilityText', 'compatibilityResult', () => nextStep(3));
             } else if (step === 3) {
-                simulateProgress('backupProgress', 'backupText', null, 4);
+                simulateProgress('backupProgress', 'backupText', '', () => nextStep(4));
             } else if (step === 11) {
-                simulateProgress('installationProgress', 'installationText', null, 12);
+                simulateProgress('installationProgress', 'installationText', '', () => nextStep(12));
             }
         }
 
-        function simulateProgress(progressId, textId, resultId, nextStep) {
+        function simulateProgress(progressId, textId, resultId, callback) {
             let progress = 0;
             const progressBar = document.getElementById(progressId);
             const progressText = document.getElementById(textId);
@@ -211,7 +211,7 @@
                     if (resultId) {
                         document.getElementById(resultId).classList.remove('hidden');
                     }
-                    setTimeout(() => nextStep(step), 1000);
+                    setTimeout(callback, 1000);
                 }
             }, 50); // Speed up the simulation for demo purposes
         }
