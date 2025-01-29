@@ -96,6 +96,17 @@
         input[type="checkbox"] {
             margin: 10px 0;
         }
+
+        .license-terms {
+            height: 300px;
+            overflow-y: scroll;
+            background: #1b1b1b;
+            border: 1px solid #6a6a6a;
+            padding: 10px;
+            margin: 10px 0;
+            text-align: left;
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -148,7 +159,9 @@
 
         <div id="step6" class="step hidden">
             <h3>Accept License Terms</h3>
-            <p>Read and accept the license terms before proceeding with the installation.</p>
+            <div class="license-terms">
+                <iframe src="./path/to/UseTerms_OEM_Windows_11_English.pdf" width="100%" height="300px"></iframe>
+            </div>
             <button onclick="nextStep(7)">Accept</button>
         </div>
 
@@ -182,6 +195,19 @@
         </div>
 
         <div id="step10" class="step hidden">
+            <h3>What will this device be used for?</h3>
+            <p>Select an option:</p>
+            <select id="deviceUsage">
+                <option value="Gaming">Gaming</option>
+                <option value="School">School</option>
+                <option value="Work">Work</option>
+                <option value="Family">Family</option>
+                <option value="Entertainment">Entertainment</option>
+            </select>
+            <button onclick="nextStep(11)">Next</button>
+        </div>
+
+        <div id="step11" class="step hidden">
             <h3>Check for Updates</h3>
             <p>Check for and install any available updates to ensure your system is up-to-date and secure.</p>
             <button onclick="restartSimulation()">Finish</button>
@@ -191,7 +217,7 @@
     <script>
         function nextStep(step) {
             // Hide all steps
-            for (let i = 1; i <= 10; i++) {
+            for (let i = 1; i <= 11; i++) {
                 document.getElementById('step' + i).classList.add('hidden');
             }
             // Show the current step
