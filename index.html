@@ -54,6 +54,10 @@
             background-color: #0056b3;
         }
 
+        .utility-buttons {
+            grid-column: span 4;
+        }
+
         .backspace-button {
             grid-column: span 4;
             padding: 20px;
@@ -88,7 +92,7 @@
     <div class="calculator">
         <input type="text" id="display" disabled>
         <div class="buttons">
-            <button onclick="clearDisplay()">C</button>
+            <button class="utility-buttons" onclick="clearDisplay()">C</button>
             <button onclick="appendToDisplay('7')">7</button>
             <button onclick="appendToDisplay('8')">8</button>
             <button onclick="appendToDisplay('9')">9</button>
@@ -103,8 +107,8 @@
             <button onclick="appendToDisplay('-')">-</button>
             <button onclick="appendToDisplay('0')">0</button>
             <button onclick="appendToDisplay('.')">.</button>
-            <button onclick="calculateResult()">=</button>
             <button onclick="appendToDisplay('+')">+</button>
+            <button class="utility-buttons" onclick="calculateResult()">=</button>
             <button class="backspace-button" onclick="backspace()">Backspace</button>
         </div>
     </div>
