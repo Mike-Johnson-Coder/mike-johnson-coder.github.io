@@ -1,99 +1,53 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Urban Planning Simulator</title>
+    <title>Urban Planning Simulation</title>
     <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            background-color: #f0f0f0;
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
+        .land-parcel {
+            display: inline-block;
+            padding: 10px;
+            margin: 5px;
+            border: 1px solid #ddd;
+            cursor: pointer;
         }
-
-        .controls {
+        #select-all-container {
             margin-bottom: 20px;
-        }
-
-        button {
-            padding: 10px 20px;
-            margin: 0 5px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #ddd;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(10, 50px);
-            grid-template-rows: repeat(10, 50px);
-            gap: 5px;
-        }
-
-        .cell {
-            width: 50px;
-            height: 50px;
-            background-color: #fff;
-            border: 1px solid #ccc;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-        }
-
-        .cell.residential {
-            background-color: lightgreen;
-        }
-
-        .cell.commercial {
-            background-color: lightblue;
-        }
-
-        .cell.industrial {
-            background-color: lightcoral;
         }
     </style>
 </head>
 <body>
-    <div class="controls">
-        <button onclick="selectBuilding('residential')">Residential</button>
-        <button onclick="selectBuilding('commercial')">Commercial</button>
-        <button onclick="selectBuilding('industrial')">Industrial</button>
+    <h1>Urban Planning Simulation</h1>
+    <div id="select-all-container">
+        <input type="checkbox" id="select-all"> Select All
     </div>
-    <div class="grid" id="grid"></div>
+    <div id="land-container">
+        <div class="land-parcel"><input type="checkbox" class="land-checkbox"> Parcel 1</div>
+        <div class="land-parcel"><input type="checkbox" class="land-checkbox"> Parcel 2</div>
+        <div class="land-parcel"><input type="checkbox" class="land-checkbox"> Parcel 3</div>
+        <div class="land-parcel"><input type="checkbox" class="land-checkbox"> Parcel 4</div>
+    </div>
+
     <script>
-        let selectedBuilding = null;
-
-        function selectBuilding(buildingType) {
-            selectedBuilding = buildingType;
-        }
-
-        function createGrid() {
-            const grid = document.getElementById('grid');
-            for (let i = 0; i < 100; i++) {
-                const cell = document.createElement('div');
-                cell.className = 'cell';
-                cell.addEventListener('click', () => placeBuilding(cell));
-                grid.appendChild(cell);
-            }
-        }
-
-        function placeBuilding(cell) {
-            if (selectedBuilding) {
-                cell.className = 'cell ' + selectedBuilding;
-            }
-        }
-
-        // Initialize the grid on page load
-        window.onload = createGrid;
+        document.addEventListener('DOMContentLoaded', function() {
+            const selectAllCheckbox = document.getElementById('select-all');
+            const landCheckboxes = document.querySelectorAll('.land-checkbox');
+        
+            selectAllCheckbox.addEventListener('change', function() {
+                landCheckboxes.forEach(checkbox => {
+                    checkbox.checked = selectAllCheckbox.checked;
+                });
+            });
+        
+            landCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    if (!checkbox.checked) {
+                        selectAllCheckbox.checked = false;
+                    } else if (Array.from(landCheckboxes).every(cb => cb.checked)) {
+                        selectAllCheckbox.checked = true;
+                    }
+                });
+            });
+        });
     </script>
 </body>
 </html>
