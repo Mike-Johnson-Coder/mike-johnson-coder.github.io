@@ -216,6 +216,12 @@
             const display = document.getElementById('display');
             let expression = display.value;
 
+            // Check for fractions
+            if ((expression.match(/\//g) || []).length === 2) {
+                handleFraction(expression);
+                return;
+            }
+
             expression = insertMultiplication(expression);
 
             // Replace variables with their values if they are set
@@ -246,6 +252,18 @@
                     display.value = algebra.parse(expression).toString();
                 }
             } catch (error) {
+                display.value = 'Error';
+            }
+        }
+
+        function handleFraction(expression) {
+            const display = document.getElementById('display');
+            const parts = expression.split('/');
+            if (parts.length === 3) {
+                const numerator = parseFloat(parts[0]);
+                const denominator = parseFloat(parts[1]) / parseFloat(parts[2]);
+                display.value = (numerator / denominator).toString();
+            } else {
                 display.value = 'Error';
             }
         }
