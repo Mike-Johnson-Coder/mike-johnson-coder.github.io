@@ -145,8 +145,8 @@
             margin-top: 10px;
         }
     </style>
-    <!-- Include math.js library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.5.0/math.min.js"></script>
+    <!-- Include algebra.js library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/algebra.js/0.2.6/algebra.min.js"></script>
 </head>
 <body>
     <div class="calculator">
@@ -218,13 +218,33 @@
 
             expression = insertMultiplication(expression);
 
-            // Replace variables with their values
+            // Replace variables with their values if they are set
             expression = expression.replace(/x/g, variables.x);
             expression = expression.replace(/y/g, variables.y);
             expression = expression.replace(/z/g, variables.z);
 
             try {
-                display.value = math.evaluate(expression);
+                // Create an equation if it contains '='
+                if (expression.includes('=')) {
+                    const sides = expression.split('=');
+                    const left = algebra.parse(sides[0]);
+                    const right = algebra.parse(sides[1]);
+                    const eq = new algebra.Equation(left, right);
+
+                    // Solve for x, y, or z
+                    if (expression.includes('x')) {
+                        display.value = eq.solveFor("x").toString();
+                    } else if (expression.includes('y')) {
+                        display.value = eq.solveFor("y").toString();
+                    } else if (expression.includes('z')) {
+                        display.value = eq.solveFor("z").toString();
+                    } else {
+                        display.value = 'Error';
+                    }
+                } else {
+                    // Evaluate the expression directly
+                    display.value = algebra.parse(expression).toString();
+                }
             } catch (error) {
                 display.value = 'Error';
             }
@@ -240,7 +260,7 @@
         }
 
         function insertMultiplication(expression) {
-            // Insert multiplication symbols before variables
+            // Insert multiplication symbols before variables and fractions
             expression = expression.replace(/(\d)([xyz])/g, '$1*$2');
             return expression;
         }
