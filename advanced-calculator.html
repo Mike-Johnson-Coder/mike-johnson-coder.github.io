@@ -63,6 +63,21 @@
             grid-column: span 3;
         }
 
+        .backspace-button {
+            grid-column: span 5;
+            padding: 20px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            background-color: #ff0000;
+            color: white;
+            cursor: pointer;
+        }
+
+        .backspace-button:hover {
+            background-color: #cc0000;
+        }
+
         .nav-links {
             margin-top: 20px;
         }
@@ -159,7 +174,7 @@
             <button onclick="appendToDisplay('z')">z</button>
             <button class="utility-buttons" onclick="clearDisplay()">C</button>
             <button class="utility-buttons" onclick="openModal()">Set Variables</button>
-            <button class="utility-buttons" onclick="backspace()">Backspace</button>
+            <button class="backspace-button" onclick="backspace()">Backspace</button>
         </div>
     </div>
     <div class="nav-links">
