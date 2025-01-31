@@ -198,9 +198,15 @@
 
     <script>
         let variables = { x: 0, y: 0, z: 0 };
+        let errorDisplayed = false;
 
         function appendToDisplay(value) {
-            document.getElementById('display').value += value;
+            const display = document.getElementById('display');
+            if (errorDisplayed) {
+                display.value = '';
+                errorDisplayed = false;
+            }
+            display.value += value;
         }
 
         function clearDisplay() {
@@ -245,14 +251,15 @@
                     } else if (expression.includes('z')) {
                         display.value = eq.solveFor("z").toString();
                     } else {
-                        display.value = 'Error';
+                        display.value = 'Cannot solve';
                     }
                 } else {
                     // Evaluate the expression directly
                     display.value = algebra.parse(expression).toString();
                 }
             } catch (error) {
-                display.value = 'Error';
+                display.value = 'error';
+                errorDisplayed = true;
             }
         }
 
@@ -264,7 +271,8 @@
                 const denominator = parseFloat(parts[1]) / parseFloat(parts[2]);
                 display.value = (numerator / denominator).toString();
             } else {
-                display.value = 'Error';
+                display.value = 'error';
+                errorDisplayed = true;
             }
         }
 
