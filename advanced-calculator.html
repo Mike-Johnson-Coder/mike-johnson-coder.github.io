@@ -60,7 +60,9 @@
         }
 
         .variables {
-            grid-column: span 3;
+            grid-column: span 5;
+            display: flex;
+            justify-content: space-between;
         }
 
         .nav-links {
@@ -75,6 +77,12 @@
 
         .nav-links a:hover {
             text-decoration: underline;
+        }
+
+        .variable-input {
+            width: 40px;
+            font-size: 18px;
+            padding: 5px;
         }
     </style>
 </head>
@@ -106,6 +114,20 @@
             <button class="small-button" onclick="clearDisplay()">C</button>
             <button class="utility-buttons" onclick="backspace()">Backspace</button>
         </div>
+        <div class="variables">
+            <div>
+                <input type="text" class="variable-input" placeholder="x" id="setX">
+                <button onclick="setVariable('x', document.getElementById('setX').value)">Set x</button>
+            </div>
+            <div>
+                <input type="text" class="variable-input" placeholder="y" id="setY">
+                <button onclick="setVariable('y', document.getElementById('setY').value)">Set y</button>
+            </div>
+            <div>
+                <input type="text" class="variable-input" placeholder="z" id="setZ">
+                <button onclick="setVariable('z', document.getElementById('setZ').value)">Set z</button>
+            </div>
+        </div>
     </div>
     <div class="nav-links">
         <a href="simulator.html">Go to Vending Machine Simulator</a>
@@ -130,6 +152,8 @@
             const display = document.getElementById('display');
             let expression = display.value;
 
+            expression = insertMultiplication(expression);
+
             // Replace variables with their values
             expression = expression.replace(/x/g, variables.x);
             expression = expression.replace(/y/g, variables.y);
@@ -149,7 +173,17 @@
         }
 
         function setVariable(variable, value) {
-            variables[variable] = value;
+            if (!isNaN(value)) {
+                variables[variable] = parseFloat(value);
+            } else {
+                alert("Please enter a valid number for " + variable);
+            }
+        }
+
+        function insertMultiplication(expression) {
+            // Insert multiplication symbols before variables
+            expression = expression.replace(/(\d)([xyz])/g, '$1*$2');
+            return expression;
         }
 
         // Example setup for setting variable values
