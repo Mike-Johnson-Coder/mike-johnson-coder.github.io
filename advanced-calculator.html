@@ -60,9 +60,9 @@
         }
 
         .variables {
-            grid-column: span 5;
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
+            margin-top: 20px;
         }
 
         .nav-links {
@@ -79,12 +79,60 @@
             text-decoration: underline;
         }
 
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 300px;
+            border-radius: 10px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
         .variable-input {
-            width: 40px;
+            width: 100%;
             font-size: 18px;
             padding: 5px;
+            margin-bottom: 10px;
+        }
+
+        .set-variable-button {
+            width: 100%;
+            font-size: 18px;
+            padding: 10px;
+            margin-top: 10px;
         }
     </style>
+    <!-- Include math.js library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.5.0/math.min.js"></script>
 </head>
 <body>
     <div class="calculator">
@@ -115,23 +163,27 @@
             <button class="utility-buttons" onclick="backspace()">Backspace</button>
         </div>
         <div class="variables">
-            <div>
-                <input type="text" class="variable-input" placeholder="x" id="setX">
-                <button onclick="setVariable('x', document.getElementById('setX').value)">Set x</button>
-            </div>
-            <div>
-                <input type="text" class="variable-input" placeholder="y" id="setY">
-                <button onclick="setVariable('y', document.getElementById('setY').value)">Set y</button>
-            </div>
-            <div>
-                <input type="text" class="variable-input" placeholder="z" id="setZ">
-                <button onclick="setVariable('z', document.getElementById('setZ').value)">Set z</button>
-            </div>
+            <button onclick="openModal()">Set Variables</button>
         </div>
     </div>
     <div class="nav-links">
         <a href="simulator.html">Go to Vending Machine Simulator</a>
     </div>
+
+    <!-- The Modal -->
+    <div id="variableModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Set Variables</h2>
+            <input type="text" class="variable-input" id="setX" placeholder="Set x">
+            <input type="text" class="variable-input" id="setY" placeholder="Set y">
+            <input type="text" class="variable-input" id="setZ" placeholder="Set z">
+            <button class="set-variable-button" onclick="setVariable('x', document.getElementById('setX').value)">Set x</button>
+            <button class="set-variable-button" onclick="setVariable('y', document.getElementById('setY').value)">Set y</button>
+            <button class="set-variable-button" onclick="setVariable('z', document.getElementById('setZ').value)">Set z</button>
+        </div>
+    </div>
+
     <script>
         let variables = { x: 0, y: 0, z: 0 };
 
@@ -159,14 +211,8 @@
             expression = expression.replace(/y/g, variables.y);
             expression = expression.replace(/z/g, variables.z);
 
-            // Replace power operator
-            expression = expression.replace(/\^/g, '**');
-
-            // Handle square root function
-            expression = expression.replace(/sqrt\(/g, 'Math.sqrt(');
-
             try {
-                display.value = eval(expression);
+                display.value = math.evaluate(expression);
             } catch (error) {
                 display.value = 'Error';
             }
@@ -175,6 +221,7 @@
         function setVariable(variable, value) {
             if (!isNaN(value)) {
                 variables[variable] = parseFloat(value);
+                closeModal();
             } else {
                 alert("Please enter a valid number for " + variable);
             }
@@ -184,6 +231,14 @@
             // Insert multiplication symbols before variables
             expression = expression.replace(/(\d)([xyz])/g, '$1*$2');
             return expression;
+        }
+
+        function openModal() {
+            document.getElementById('variableModal').style.display = "flex";
+        }
+
+        function closeModal() {
+            document.getElementById('variableModal').style.display = "none";
         }
 
         // Example setup for setting variable values
