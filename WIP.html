@@ -3,87 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Traffic Light Simulator</title>
+    <title>Urban Planning Simulator</title>
     <style>
         body {
             display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .controls {
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 0 5px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #ddd;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(10, 50px);
+            grid-template-rows: repeat(10, 50px);
+            gap: 5px;
+        }
+
+        .cell {
+            width: 50px;
+            height: 50px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f0f0f0;
+            cursor: pointer;
         }
 
-        .traffic-light {
-            width: 100px;
-            height: 300px;
-            background-color: black;
-            border-radius: 10px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-around;
-            align-items: center;
-            padding: 10px;
+        .cell.residential {
+            background-color: lightgreen;
         }
 
-        .light {
-            width: 80px;
-            height: 80px;
-            background-color: grey;
-            border-radius: 50%;
+        .cell.commercial {
+            background-color: lightblue;
         }
 
-        .red {
-            background-color: red;
-        }
-
-        .yellow {
-            background-color: yellow;
-        }
-
-        .green {
-            background-color: green;
+        .cell.industrial {
+            background-color: lightcoral;
         }
     </style>
 </head>
 <body>
-    <div class="traffic-light">
-        <div class="light" id="red-light"></div>
-        <div class="light" id="yellow-light"></div>
-        <div class="light" id="green-light"></div>
+    <div class="controls">
+        <button onclick="selectBuilding('residential')">Residential</button>
+        <button onclick="selectBuilding('commercial')">Commercial</button>
+        <button onclick="selectBuilding('industrial')">Industrial</button>
     </div>
+    <div class="grid" id="grid"></div>
     <script>
-        const redLight = document.getElementById('red-light');
-        const yellowLight = document.getElementById('yellow-light');
-        const greenLight = document.getElementById('green-light');
+        let selectedBuilding = null;
 
-        function changeLight() {
-            setTimeout(() => {
-                redLight.classList.add('red');
-                yellowLight.classList.remove('yellow');
-                greenLight.classList.remove('green');
-            }, 0);
-
-            setTimeout(() => {
-                redLight.classList.remove('red');
-                yellowLight.classList.add('yellow');
-            }, 3000);
-
-            setTimeout(() => {
-                yellowLight.classList.remove('yellow');
-                greenLight.classList.add('green');
-            }, 6000);
-
-            setTimeout(() => {
-                greenLight.classList.remove('green');
-                redLight.classList.add('red');
-            }, 9000);
+        function selectBuilding(buildingType) {
+            selectedBuilding = buildingType;
         }
 
-        setInterval(changeLight, 12000);
+        function createGrid() {
+            const grid = document.getElementById('grid');
+            for (let i = 0; i < 100; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'cell';
+                cell.addEventListener('click', () => placeBuilding(cell));
+                grid.appendChild(cell);
+            }
+        }
 
-        // Initialize the traffic light
-        changeLight();
+        function placeBuilding(cell) {
+            if (selectedBuilding) {
+                cell.className = 'cell ' + selectedBuilding;
+            }
+        }
+
+        // Initialize the grid on page load
+        window.onload = createGrid;
     </script>
 </body>
 </html>
