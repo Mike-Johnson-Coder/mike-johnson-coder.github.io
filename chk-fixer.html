@@ -4,6 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CHK File Examiner</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        input, button {
+            margin: 10px 0;
+        }
+        #results {
+            margin-top: 20px;
+        }
+        p {
+            background: #f4f4f4;
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+    </style>
 </head>
 <body>
     <h1>CHK File Examiner</h1>
@@ -38,7 +58,6 @@
         }
 
         function determineFileExtension(uint8Array) {
-            // Mapping of file signatures (magic numbers) to file extensions
             const fileSignatures = {
                 '25504446': 'pdf',
                 'FFD8FFE0': 'jpg',
@@ -93,13 +112,21 @@
                 '00000018667479706D703432': 'mp4',
                 '3026B2758E66CF11A6D900AA0062CE6C': 'wmv',
                 '52494646': 'wav',
-                '57415645': 'wav'
+                '57415645': 'wav',
+                '1F9D': 'z',
+                '1FA0': 'z',
+                '425A68': 'bz2',
+                '1F8B': 'gz',
+                '7573746172': 'tar',
+                '526172211A0700': 'rar',
+                '377ABCAF271C': '7z',
+                '0000000C6A5020200D0A870A': 'jp2',
+                '00000020667479706D703432': 'mp4',
+                '00000018667479706D703432': 'mp4'
             };
 
-            // Get the file signature (first 4, 8, or more bytes as needed)
             const hexSignature = uint8Array.slice(0, 16).reduce((acc, byte) => acc + byte.toString(16).padStart(2, '0').toUpperCase(), '');
 
-            // Check against known file signatures
             for (const [signature, extension] of Object.entries(fileSignatures)) {
                 if (hexSignature.startsWith(signature)) {
                     return extension;
