@@ -28,33 +28,46 @@
                 reader.onload = function(e) {
                     const arrayBuffer = e.target.result;
                     const uint8Array = new Uint8Array(arrayBuffer);
-                    const fileType = determineFileType(uint8Array);
+                    const fileExtension = determineFileExtension(uint8Array);
                     const result = document.createElement('p');
-                    result.textContent = `${file.name}: ${fileType}`;
+                    result.textContent = `${file.name}: ${fileExtension}`;
                     resultsDiv.appendChild(result);
                 };
                 reader.readAsArrayBuffer(file);
             }
         }
 
-        function determineFileType(uint8Array) {
-            const magicNumbers = {
-                '25504446': 'PDF',
-                'FFD8FFE0': 'JPEG',
-                '89504E47': 'PNG',
-                '47494638': 'GIF',
-                // Add more file signatures as needed
+        function determineFileExtension(uint8Array) {
+            // Mapping of file signatures (magic numbers) to file extensions
+            const fileSignatures = {
+                '25504446': 'pdf',
+                'FFD8FFE0': 'jpg',
+                'FFD8FFE1': 'jpg',
+                'FFD8FFE2': 'jpg',
+                '89504E47': 'png',
+                '47494638': 'gif',
+                '504B0304': 'zip',
+                '3C3F786D': 'xml',
+                '25215053': 'ps',
+                '377ABCAF': '7z',
+                '52617221': 'rar',
+                '504B34': 'zip',
+                '49492A00': 'tif',
+                '424D': 'bmp',
+                // Add more file signatures and extensions as needed
             };
 
+            // Get the file signature (first 4 bytes)
             const hexSignature = uint8Array.slice(0, 4).reduce((acc, byte) => acc + byte.toString(16).padStart(2, '0').toUpperCase(), '');
 
-            for (const [signature, format] of Object.entries(magicNumbers)) {
+            // Check against known file signatures
+            for (const [signature, extension] of Object.entries(fileSignatures)) {
                 if (hexSignature.startsWith(signature)) {
-                    return format;
+                    return extension;
                 }
             }
 
-            return 'Unknown file format';
+            return 'unknown';
         }
     </script>
 </body>
