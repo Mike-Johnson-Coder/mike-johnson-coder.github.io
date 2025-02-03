@@ -32,110 +32,118 @@
     <button onclick="examineFiles()">Examine Files</button>
     <div id="results"></div>
 
-    <script>
-        function examineFiles() {
-            const fileInput = document.getElementById('fileInput');
-            const files = fileInput.files;
-            const resultsDiv = document.getElementById('results');
-            resultsDiv.innerHTML = '';
+   <script>
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js').then(function(registration) {
+            console.log('Service Worker registered with scope:', registration.scope);
+        }).catch(function(error) {
+            console.log('Service Worker registration failed:', error);
+        });
+    }
 
-            if (files.length === 0) {
-                alert('Please select .chk files to examine.');
-                return;
-            }
+    function examineFiles() {
+        const fileInput = document.getElementById('fileInput');
+        const files = fileInput.files;
+        const resultsDiv = document.getElementById('results');
+        resultsDiv.innerHTML = '';
 
-            for (const file of files) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const arrayBuffer = e.target.result;
-                    const uint8Array = new Uint8Array(arrayBuffer);
-                    const fileExtension = determineFileExtension(uint8Array);
-                    const result = document.createElement('p');
-                    result.textContent = `${file.name}: ${fileExtension}`;
-                    resultsDiv.appendChild(result);
-                };
-                reader.readAsArrayBuffer(file);
-            }
+        if (files.length === 0) {
+            alert('Please select .chk files to examine.');
+            return;
         }
 
-        function determineFileExtension(uint8Array) {
-            const fileSignatures = {
-                '25504446': 'pdf',
-                'FFD8FFE0': 'jpg',
-                'FFD8FFE1': 'jpg',
-                'FFD8FFE2': 'jpg',
-                '89504E47': 'png',
-                '47494638': 'gif',
-                '504B0304': 'zip',
-                '3C3F786D': 'xml',
-                '25215053': 'ps',
-                '377ABCAF': '7z',
-                '52617221': 'rar',
-                '504B34': 'zip',
-                '49492A00': 'tif',
-                '424D': 'bmp',
-                '4D5A': 'exe',
-                '255044': 'pdf',
-                'D0CF11E0': 'doc',
-                '504B0304': 'docx',
-                '57415645': 'wav',
-                '52494646': 'avi',
-                '000001BA': 'mpg',
-                '000001B3': 'mpg',
-                '66747970': 'mp4',
-                '00000018': 'mp4',
-                '00000020': 'mp4',
-                'FFFB': 'mp3',
-                '494433': 'mp3',
-                '4F676753': 'ogg',
-                '1A45DFA3': 'mkv',
-                '377ABCAF271C': '7z',
-                '1F8B08': 'gz',
-                '425A68': 'bz2',
-                '504B030414000800': 'jar',
-                '4D546864': 'mid',
-                '00000100': 'ico',
-                '3026B2758E66CF11': 'wmv',
-                '3026B2758E66CF11A6D900AA0062CE6C': 'asf',
-                '57415645': 'wav',
-                '41564920': 'avi',
-                '2E524D46': 'rm',
-                '000001BA21000100': 'mpg',
-                '6D6F6F76': 'mov',
-                '3026B2758E66CF11A6D900AA0062CE6C': 'asf',
-                '4D546864': 'mid',
-                '5265636F7264696E67': 'avi',
-                '00000020667479706D703432': 'mp4',
-                '0000001C667479706D704D': 'mp4',
-                '66747970': 'mp4',
-                '000001B3': 'mpg',
-                '000001BA': 'mpg',
-                '00000018667479706D703432': 'mp4',
-                '3026B2758E66CF11A6D900AA0062CE6C': 'wmv',
-                '52494646': 'wav',
-                '57415645': 'wav',
-                '1F9D': 'z',
-                '1FA0': 'z',
-                '425A68': 'bz2',
-                '1F8B': 'gz',
-                '7573746172': 'tar',
-                '526172211A0700': 'rar',
-                '377ABCAF271C': '7z',
-                '0000000C6A5020200D0A870A': 'jp2',
-                '00000020667479706D703432': 'mp4',
-                '00000018667479706D703432': 'mp4'
+        for (const file of files) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const arrayBuffer = e.target.result;
+                const uint8Array = new Uint8Array(arrayBuffer);
+                const fileExtension = determineFileExtension(uint8Array);
+                const result = document.createElement('p');
+                result.textContent = `${file.name}: ${fileExtension}`;
+                resultsDiv.appendChild(result);
             };
-
-            const hexSignature = uint8Array.slice(0, 16).reduce((acc, byte) => acc + byte.toString(16).padStart(2, '0').toUpperCase(), '');
-
-            for (const [signature, extension] of Object.entries(fileSignatures)) {
-                if (hexSignature.startsWith(signature)) {
-                    return extension;
-                }
-            }
-
-            return 'unknown';
+            reader.readAsArrayBuffer(file);
         }
-    </script>
+    }
+
+    function determineFileExtension(uint8Array) {
+        const fileSignatures = {
+            '25504446': 'pdf',
+            'FFD8FFE0': 'jpg',
+            'FFD8FFE1': 'jpg',
+            'FFD8FFE2': 'jpg',
+            '89504E47': 'png',
+            '47494638': 'gif',
+            '504B0304': 'zip',
+            '3C3F786D': 'xml',
+            '25215053': 'ps',
+            '377ABCAF': '7z',
+            '52617221': 'rar',
+            '504B34': 'zip',
+            '49492A00': 'tif',
+            '424D': 'bmp',
+            '4D5A': 'exe',
+            '255044': 'pdf',
+            'D0CF11E0': 'doc',
+            '504B0304': 'docx',
+            '57415645': 'wav',
+            '52494646': 'avi',
+            '000001BA': 'mpg',
+            '000001B3': 'mpg',
+            '66747970': 'mp4',
+            '00000018': 'mp4',
+            '00000020': 'mp4',
+            'FFFB': 'mp3',
+            '494433': 'mp3',
+            '4F676753': 'ogg',
+            '1A45DFA3': 'mkv',
+            '377ABCAF271C': '7z',
+            '1F8B08': 'gz',
+            '425A68': 'bz2',
+            '504B030414000800': 'jar',
+            '4D546864': 'mid',
+            '00000100': 'ico',
+            '3026B2758E66CF11': 'wmv',
+            '3026B2758E66CF11A6D900AA0062CE6C': 'asf',
+            '57415645': 'wav',
+            '41564920': 'avi',
+            '2E524D46': 'rm',
+            '000001BA21000100': 'mpg',
+            '6D6F6F76': 'mov',
+            '3026B2758E66CF11A6D900AA0062CE6C': 'asf',
+            '4D546864': 'mid',
+            '5265636F7264696E67': 'avi',
+            '00000020667479706D703432': 'mp4',
+            '0000001C667479706D704D': 'mp4',
+            '66747970': 'mp4',
+            '000001B3': 'mpg',
+            '000001BA': 'mpg',
+            '00000018667479706D703432': 'mp4',
+            '3026B2758E66CF11A6D900AA0062CE6C': 'wmv',
+            '52494646': 'wav',
+            '57415645': 'wav',
+            '1F9D': 'z',
+            '1FA0': 'z',
+            '425A68': 'bz2',
+            '1F8B': 'gz',
+            '7573746172': 'tar',
+            '526172211A0700': 'rar',
+            '377ABCAF271C': '7z',
+            '0000000C6A5020200D0A870A': 'jp2',
+            '00000020667479706D703432': 'mp4',
+            '00000018667479706D703432': 'mp4'
+        };
+
+        const hexSignature = uint8Array.slice(0, 16).reduce((acc, byte) => acc + byte.toString(16).padStart(2, '0').toUpperCase(), '');
+
+        for (const [signature, extension] of Object.entries(fileSignatures)) {
+            if (hexSignature.startsWith(signature)) {
+                return extension;
+            }
+        }
+
+        return 'unknown';
+    }
+</script>
 </body>
 </html>
