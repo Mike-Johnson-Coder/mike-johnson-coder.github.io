@@ -54,11 +54,22 @@
                 '504B34': 'zip',
                 '49492A00': 'tif',
                 '424D': 'bmp',
+                '4D5A': 'exe',
+                '255044': 'pdf',
+                'D0CF11E0': 'doc',
+                '504B0304': 'docx',
+                '57415645': 'wav',
+                '52494646': 'avi',
+                '000001BA': 'mpg',
+                '000001B3': 'mpg',
+                '66747970': 'mp4',
+                '00000018': 'mp4',
+                '00000020': 'mp4',
                 // Add more file signatures and extensions as needed
             };
 
-            // Get the file signature (first 4 bytes)
-            const hexSignature = uint8Array.slice(0, 4).reduce((acc, byte) => acc + byte.toString(16).padStart(2, '0').toUpperCase(), '');
+            // Get the file signature (first 4 or 8 bytes)
+            const hexSignature = uint8Array.slice(0, 8).reduce((acc, byte) => acc + byte.toString(16).padStart(2, '0').toUpperCase(), '');
 
             // Check against known file signatures
             for (const [signature, extension] of Object.entries(fileSignatures)) {
