@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHK File Examiner</title>
+</head>
+<body>
+    <h1>CHK File Examiner</h1>
+    <input type="file" id="fileInput" accept=".chk" multiple>
+    <button onclick="examineFiles()">Examine Files</button>
+    <div id="results"></div>
+
+    <script>
+        function examineFiles() {
+            const fileInput = document.getElementById('fileInput');
+            const files = fileInput.files;
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '';
+
+            if (files.length === 0) {
+                alert('Please select .chk files to examine.');
+                return;
+            }
+
+            for (const file of files) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const arrayBuffer = e.target.result;
+                    const uint8Array = new Uint8Array(arrayBuffer);
+                    const fileType = determineFileType(uint8Array);
+                    const result = document.createElement('p');
+                    result.textContent = `${file.name}: ${fileType}`;
+                    resultsDiv.appendChild(result);
+                };
+                reader.readAsArrayBuffer(file);
+            }
+        }
+
+        function determineFileType(uint8Array) {
+            const magicNumbers = {
+                '25504446': 'PDF',
+                'FFD8FFE0': 'JPEG',
+                '89504E47': 'PNG',
+                '47494638': 'GIF',
+                // Add more file signatures as needed
+            };
+
+            const hexSignature = uint8Array.slice(0, 4).reduce((acc, byte) => acc + byte.toString(16).padStart(2, '0').toUpperCase(), '');
+
+            for (const [signature, format] of Object.entries(magicNumbers)) {
+                if (hexSignature.startsWith(signature)) {
+                    return format;
+                }
+            }
+
+            return 'Unknown file format';
+        }
+    </script>
+</body>
+</html>
