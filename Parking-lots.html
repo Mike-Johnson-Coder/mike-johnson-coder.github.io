@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parking Lot Plan</title>
+    <style>
+        .parking-lot {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            grid-gap: 10px;
+            margin: 20px;
+        }
+        .parking-space {
+            width: 100px;
+            height: 200px;
+            border: 2px solid black;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f0f0f0;
+            font-size: 18px;
+        }
+        .occupied {
+            background-color: #ff4d4d;
+        }
+    </style>
+</head>
+<body>
+    <h1>Parking Lot Plan</h1>
+    <div class="parking-lot" id="parking-lot"></div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const parkingLot = document.getElementById('parking-lot');
+            const totalSpots = 10;
+            for (let i = 1; i <= totalSpots; i++) {
+                const parkingSpace = document.createElement('div');
+                parkingSpace.className = 'parking-space';
+                parkingSpace.textContent = i;
+                parkingLot.appendChild(parkingSpace);
+            }
+        });
+    </script>
+</body>
+</html>
