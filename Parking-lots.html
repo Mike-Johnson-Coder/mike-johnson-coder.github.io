@@ -28,11 +28,18 @@
 </head>
 <body>
     <h1>Parking Lot Plan</h1>
+    <form id="parking-form">
+        <label for="spots">Number of parking spots:</label>
+        <input type="number" id="spots" name="spots" min="1" value="10">
+        <button type="submit">Generate</button>
+    </form>
     <div class="parking-lot" id="parking-lot"></div>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('parking-form').addEventListener('submit', function(event) {
+            event.preventDefault();
             const parkingLot = document.getElementById('parking-lot');
-            const totalSpots = 10;
+            parkingLot.innerHTML = '';
+            const totalSpots = document.getElementById('spots').value;
             for (let i = 1; i <= totalSpots; i++) {
                 const parkingSpace = document.createElement('div');
                 parkingSpace.className = 'parking-space';
