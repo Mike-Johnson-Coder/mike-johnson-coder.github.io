@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuclear Power Station Simulation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 1;
+        }
+        h1 {
+            color: #333;
+        }
+        .controls {
+            margin-bottom: 20px;
+        }
+        .controls button {
+            margin-right: 10px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .controls button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        .status {
+            margin-top: 20px;
+        }
+        .status div {
+            margin-bottom: 10px;
+        }
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 2;
+            justify-content: center;
+            align-items: center;
+        }
+        .popup {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .popup button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .debug-console {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 200px;
+            background-color: rgba(0, 0, 0, 0.9);
+            color: #fff;
+            z-index: 3;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        .debug-console input {
+            width: 100%;
+            background: none;
+            border: none;
+            color: #fff;
+            font-family: monospace;
+            font-size: 14px;
+            padding: 5px;
+            box-sizing: border-box;
+        }
+        .commands-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 4;
+        }
+        .commands-list {
+            display: none;
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            width: 250px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 3;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        .commands-list ul {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        .commands-list li {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Nuclear Power Station Simulation</h1>
+        <div class="controls">
+            <button id="start">Start Reactor</button>
+            <button id="cooling">Activate Cooling System</button>
+            <button id="stop">Stop Reactor</button>
+        </div>
+        <div class="status">
+            <div id="reactor-status">Reactor Status: Stopped</div>
+            <div id="cooling-status">Cooling System: Inactive</div>
+            <div id="power-output">Power Output: 0 MW</div>
+            <div id="meltdown-status">Meltdown Status: No Meltdown</div>
+            <div id="waste">Waste: 0 units</div>
+            <div id="security">Security Threats: None</div>
+            <div id="environment">Environmental Impact: Low</div>
+            <div id="infrastructure">Infrastructure Status: Good</div>
+            <div id="human-error">Human Error: None</div>
+            <div id="disasters">Natural Disasters: None</div>
+            <div id="public-perception">Public Perception: Neutral</div>
+            <div id="supply-chain">Supply Chain: Stable</div>
+            <div id="health-risks">Health Risks: Low</div>
+            <div id="uptime">Reactor Uptime: 00:00:00</div>
+        </div>
+    </div>
+
+    <div class="popup-overlay" id="popup-overlay">
+        <div class="popup">
+            <h2>Waste Management Alert</h2>
+            <p>The waste has reached 100,000 units. Please remove the waste from the system.</p>
+            <button id="remove-waste">Remove Waste</button>
+        </div>
+    </div>
+
+    <div class="debug-console" id="debug-console">
+        <input type="text" id="debug-input" placeholder="Enter debug command...">
+    </div>
+
+    <button class="commands-button" id="commands-button">Commands</button>
+    <div class="commands-list" id="commands-list">
+        <ul>
+            <li><code>setwaste [value]</code></li>
+            <li><code>setsecurity [value]</code></li>
+            <li><code>setenvironment [value]</code></li>
+            <li><code>setinfrastructure [value]</code></li>
+            <li><code>sethumanerror [true/false]</code></li>
+            <li><code>setdisasters [value]</code></li>
+            <li><code>setpublicperception [value]</code></li>
+            <li><code>setsupplychain [true/false]</code></li>
+            <li><code>sethealthrisks [value]</code></li>
+            <li><code>setwastepersecond [value]</code></li>
+        </ul>
+    </div>
+
+    <script>
+        let reactorRunning = false;
+        let coolingActive = false;
+        let powerOutput = 0;
+        let meltdown = false;
+        let meltdownTimeout;
+        let waste = 0;
+        let wasteInterval;
+        let uptimeInterval;
+        let uptimeSeconds = 0;
+        let securityThreats = 0;
+        let environmentalImpact = 1; // 1: Low, 2: Medium, 3: High
+        let infrastructureStatus = 1; // 1: Good, 2: Fair, 3: Poor
+        let humanError = false;
+        let naturalDisasters = 0;
+        let publicPerception = 2; // 1: Positive, 2: Neutral, 3: Negative
+        let supplyChainStable = true;
+        let healthRisks = 1; // 1: Low, 2: Medium, 3: High
+        let debugMode = false;
+        let wastePerSecond = 0.634;
+
+        const startButton = document.getElementById('start');
+        const coolingButton = document.getElementById('cooling');
+        const stopButton = document.getElementById('stop');
+        const reactorStatus = document.getElementById('reactor-status');
+        const coolingStatus = document.getElementById('cooling-status');
+        const powerOutputDisplay = document.getElementById('power-output');
+        const meltdownStatus = document.getElementById('meltdown-status');
+        const wasteDisplay = document.getElementById('waste');
+        const securityDisplay = document.getElementById('security');
+        const environmentDisplay = document.getElementById('environment');
+        const infrastructureDisplay = document.getElementById('infrastructure');
+        const humanErrorDisplay = document.getElementById('human-error');
+        const disastersDisplay = document.getElementById('disasters');
+        const publicPerceptionDisplay = document.getElementById('public-perception');
+        const supplyChainDisplay = document.getElementById('supply-chain');
+        const healthRisksDisplay = document.getElementById('health-risks');
+        const uptimeDisplay = document.getElementById('uptime');
+        const popupOverlay = document.getElementById('popup-overlay');
+        const removeWasteButton = document.getElementById('remove-waste');
+        const debugConsole = document.getElementById('debug-console');
+        const debugInput = document.getElementById('debug-input');
+        const commandsButton = document.getElementById('commands-button');
+        const commandsList = document.getElementById('commands-list');
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key.toLowerCase() === 'd') {
+                const input = prompt("Enter debug mode passphrase:");
+                if (input && input.toLowerCase() === 'debug-mode-2025') {
+                    debugMode = true;
+                    debugConsole.style.display = 'block';
+                    alert('Debug mode activated');
+                }
+            }
+        });
+
+        debugInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                const command = debugInput.value.trim().toLowerCase();
+                executeDebugCommand(command);
+                debugInput.value = '';
+            }
+        });
+
+        commandsButton.addEventListener('click', () => {
+            commandsList.style.display = commandsList.style.display === 'block' ? 'none' : 'block';
+        });
+
+        function executeDebugCommand(command) {
+            const [action, value] = command.split(' ');
+            const numValue = parseFloat(value);
+
+            switch (action) {
+                case 'setwaste':
+                    if (!isNaN(numValue)) waste = numValue;
+                    break;
+                case 'setsecurity':
+                    securityThreats = isNaN(numValue) ? securityThreats : numValue > 0 ? 1 : 0;
+                    break;
+                case 'setenvironment':
+                    environmentalImpact = isNaN(numValue) ? environmentalImpact : Math.min(Math.max(numValue, 1), 3);
+                    break;
+                case 'setinfrastructure':
+                    infrastructureStatus = isNaN(numValue) ? infrastructureStatus : Math.min(Math.max(numValue, 1), 3);
+                    break;
+                case 'sethumanerror':
+                    humanError = value === 'true';
+                    break;
+                case 'setdisasters':
+                    naturalDisasters = isNaN(numValue) ? naturalDisasters : numValue > 0 ? 1 : 0;
+                    break;
+                case 'setpublicperception':
+                    publicPerception = isNaN(numValue) ? publicPerception : Math.min(Math.max(numValue, 1), 3);
+                    break;
+                case 'setsupplychain':
+                    supplyChainStable = value === 'true';
+                    break;
+                case 'sethealthrisks':
+                    healthRisks = isNaN(numValue) ? healthRisks : Math.min(Math.max(numValue, 1), 3);
+                    break;
+                case 'setwastepersecond':
+                    if (!isNaN(numValue)) wastePerSecond = numValue;
+                    break;
+                default:
+                    alert('Invalid command');
+            }
+
+            updateStatus();
+        }
+
+        startButton.addEventListener('click', () => {
+            reactorRunning = true;
+            powerOutput = 500; // Example power output
+            meltdown = false;
+            startMeltdownTimer();
+            startWasteGeneration();
+            startUptimeCounter();
+            generateChallenges();
+            updateStatus();
+        });
+
+        coolingButton.addEventListener('click', () => {
+            if (reactorRunning) {
+                coolingActive = !coolingActive;
+                if (coolingActive) {
+                    powerOutput -= 100; // Reduce power output due to cooling
+                    clearTimeout(meltdownTimeout); // Prevent meltdown
+                } else {
+                    powerOutput += 100; // Restore power output
+                    startMeltdownTimer(); // Restart meltdown timer
+                }
+                updateStatus();
+            }
+        });
+
+        stopButton.addEventListener('click', () => {
+            reactorRunning = false;
+            powerOutput = 0;
+            coolingActive = false;
+            clearTimeout(meltdownTimeout);
+            stopWasteGeneration();
+            stopUptimeCounter();
+            updateStatus();
+        });
+
+        removeWasteButton.addEventListener('click', () => {
+            waste = 0;
+            popupOverlay.style.display = 'none';
+            updateStatus();
+        });
+
+        function startMeltdownTimer() {
+            const randomTime = Math.random() * 10000 + 5000; // Random time between 5 and 15 seconds
+            meltdownTimeout = setTimeout(() => {
+                const chance = Math.random();
+                const meltdownProbability = 1 / 1000000; // 1 in 1,000,000 reactor-years
+
+                if (chance < meltdownProbability) {
+                    meltdown = true;
+                    powerOutput = 0;
+                    reactorRunning = false;
+                    coolingActive = false;
+                    stopWasteGeneration();
+                    stopUptimeCounter();
+                }
+                updateStatus();
+            }, randomTime);
+        }
+
+        function startWasteGeneration() {
+            wasteInterval = setInterval(() => {
+                waste += wastePerSecond;
+                if (waste >= 100000) {
+                    popupOverlay.style.display = 'flex';
+                }
+                updateStatus();
+            }, 1000);
+        }
+
+        function stopWasteGeneration() {
+            clearInterval(wasteInterval);
+        }
+
+        function startUptimeCounter() {
+            uptimeInterval = setInterval(() => {
+                uptimeSeconds++;
+                updateUptimeDisplay();
+            }, 1000);
+        }
+
+        function stopUptimeCounter() {
+            clearInterval(uptimeInterval);
+        }
+
+        function updateUptimeDisplay() {
+            const hours = Math.floor(uptimeSeconds / 3600);
+            const minutes = Math.floor((uptimeSeconds % 3600) / 60);
+            const seconds = uptimeSeconds % 60;
+            uptimeDisplay.textContent = `Reactor Uptime: ${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        function generateChallenges() {
+            if (Math.random() < (debugMode ? 0.5 : 0.05)) { // 5% chance of a waste management issue
+                waste += 10;
+            }
+            if (Math.random() < (debugMode ? 0.2 : 0.02)) { // 2% chance of a security threat
+                securityThreats += 1;
+            }
+            if (Math.random() < (debugMode ? 0.3 : 0.03)) { // 3% chance of an environmental impact
+                environmentalImpact = Math.min(environmentalImpact + 1, 3);
+            }
+            if (Math.random() < (debugMode ? 0.4 : 0.04)) { // 4% chance of infrastructure degradation
+                infrastructureStatus = Math.min(infrastructureStatus + 1, 3);
+            }
+            if (Math.random() < (debugMode ? 0.1 : 0.01)) { // 1% chance of human error
+                humanError = true;
+            }
+            if (Math.random() < (debugMode ? 0.3 : 0.03)) { // 3% chance of a natural disaster
+                naturalDisasters += 1;
+            }
+            if (Math.random() < (debugMode ? 0.5 : 0.05)) { // 5% chance of public perception change
+                publicPerception = Math.max(publicPerception - 1, 1);
+            }
+            if (Math.random() < (debugMode ? 0.2 : 0.02)) { // 2% chance of supply chain disruption
+                supplyChainStable = false;
+            }
+            if (Math.random() < (debugMode ? 0.3 : 0.03)) { // 3% chance of increased health risks
+                healthRisks = Math.min(healthRisks + 1, 3);
+            }
+        }
+
+        function updateStatus() {
+            reactorStatus.textContent = `Reactor Status: ${reactorRunning ? 'Running' : 'Stopped'}`;
+            coolingStatus.textContent = `Cooling System: ${coolingActive ? 'Active' : 'Inactive'}`;
+            powerOutputDisplay.textContent = `Power Output: ${powerOutput} MW`;
+            meltdownStatus.textContent = `Meltdown Status: ${meltdown ? 'Meltdown Occurred!' : 'No Meltdown'}`;
+            wasteDisplay.textContent = `Waste: ${waste.toFixed(3)} units`;
+            securityDisplay.textContent = `Security Threats: ${securityThreats > 0 ? 'Yes' : 'None'}`;
+            environmentDisplay.textContent = `Environmental Impact: ${['Low', 'Medium', 'High'][environmentalImpact - 1]}`;
+            infrastructureDisplay.textContent = `Infrastructure Status: ${['Good', 'Fair', 'Poor'][infrastructureStatus - 1]}`;
+            humanErrorDisplay.textContent = `Human Error: ${humanError ? 'Occurred' : 'None'}`;
+            disastersDisplay.textContent = `Natural Disasters: ${naturalDisasters > 0 ? 'Occurred' : 'None'}`;
+            publicPerceptionDisplay.textContent = `Public Perception: ${['Positive', 'Neutral', 'Negative'][publicPerception - 1]}`;
+            supplyChainDisplay.textContent = `Supply Chain: ${supplyChainStable ? 'Stable' : 'Disrupted'}`;
+            healthRisksDisplay.textContent = `Health Risks: ${['Low', 'Medium', 'High'][healthRisks - 1]}`;
+
+            startButton.disabled = reactorRunning;
+            coolingButton.disabled = !reactorRunning;
+            stopButton.disabled = !reactorRunning;
+        }
+    </script>
+</body>
+</html>
