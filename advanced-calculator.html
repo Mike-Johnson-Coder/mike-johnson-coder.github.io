@@ -175,6 +175,7 @@
             <button onclick="appendToDisplay('z')">z</button>
             <button onclick="appendToDisplay('(')">(</button>
             <button onclick="appendToDisplay(')')">)</button>
+            <button onclick="noop()">:</button>
             <button class="utility-buttons" onclick="clearDisplay()">C</button>
             <button class="utility-buttons" onclick="openModal()">Set Variables</button>
             <button class="backspace-button" onclick="backspace()">Backspace</button>
@@ -201,6 +202,9 @@
    <script>
     let variables = { x: 0, y: 0, z: 0 };
     let errorDisplayed = false;
+       function noop() {
+    // This function does nothing
+}
 
     function appendToDisplay(value) {
         const display = document.getElementById('display');
