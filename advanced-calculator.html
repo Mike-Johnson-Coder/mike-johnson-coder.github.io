@@ -173,6 +173,8 @@
             <button onclick="appendToDisplay('+')">+</button>
             <button onclick="appendToDisplay('y')">y</button>
             <button onclick="appendToDisplay('z')">z</button>
+            <button onclick="appendToDisplay('(')">(</button>
+            <button onclick="appendToDisplay(')')">)</button>
             <button class="utility-buttons" onclick="clearDisplay()">C</button>
             <button class="utility-buttons" onclick="openModal()">Set Variables</button>
             <button class="backspace-button" onclick="backspace()">Backspace</button>
@@ -196,114 +198,95 @@
         </div>
     </div>
 
-    <script>
-        let variables = { x: 0, y: 0, z: 0 };
-        let errorDisplayed = false;
+   <script>
+    let variables = { x: 0, y: 0, z: 0 };
+    let errorDisplayed = false;
 
-        function appendToDisplay(value) {
-            const display = document.getElementById('display');
-            if (errorDisplayed) {
-                display.value = '';
-                errorDisplayed = false;
-            }
-            display.value += value;
+    function appendToDisplay(value) {
+        const display = document.getElementById('display');
+        if (errorDisplayed) {
+            display.value = '';
+            errorDisplayed = false;
+        }
+        display.value += value;
+    }
+
+    function clearDisplay() {
+        document.getElementById('display').value = '';
+    }
+
+    function backspace() {
+        const display = document.getElementById('display');
+        display.value = display.value.slice(0, -1);
+    }
+
+    function calculateResult() {
+        const display = document.getElementById('display');
+        let expression = display.value;
+
+        // Check for fractions
+        if ((expression.match(/\//g) || []).length === 2) {
+            handleFraction(expression);
+            return;
         }
 
-        function clearDisplay() {
-            document.getElementById('display').value = '';
+        expression = insertMultiplication(expression);
+
+        // Replace variables with their values if they are set
+        expression = expression.replace(/x/g, variables.x);
+        expression = expression.replace(/y/g, variables.y);
+        expression = expression.replace(/z/g, variables.z);
+
+        try {
+            // Evaluate the expression directly with parentheses support
+            display.value = algebra.parse(expression).toString();
+        } catch (error) {
+            display.value = 'error';
+            errorDisplayed = true;
         }
+    }
 
-        function backspace() {
-            const display = document.getElementById('display');
-            display.value = display.value.slice(0, -1);
+    function handleFraction(expression) {
+        const display = document.getElementById('display');
+        const parts = expression.split('/');
+        if (parts.length === 3) {
+            const numerator = parseFloat(parts[0]);
+            const denominator = parseFloat(parts[1]) / parseFloat(parts[2]);
+            display.value = (numerator / denominator).toString();
+        } else {
+            display.value = 'error';
+            errorDisplayed = true;
         }
+    }
 
-        function calculateResult() {
-            const display = document.getElementById('display');
-            let expression = display.value;
-
-            // Check for fractions
-            if ((expression.match(/\//g) || []).length === 2) {
-                handleFraction(expression);
-                return;
-            }
-
-            expression = insertMultiplication(expression);
-
-            // Replace variables with their values if they are set
-            expression = expression.replace(/x/g, variables.x);
-            expression = expression.replace(/y/g, variables.y);
-            expression = expression.replace(/z/g, variables.z);
-
-            try {
-                // Create an equation if it contains '='
-                if (expression.includes('=')) {
-                    const sides = expression.split('=');
-                    const left = algebra.parse(sides[0]);
-                    const right = algebra.parse(sides[1]);
-                    const eq = new algebra.Equation(left, right);
-
-                    // Solve for x, y, or z
-                    if (expression.includes('x')) {
-                        display.value = eq.solveFor("x").toString();
-                    } else if (expression.includes('y')) {
-                        display.value = eq.solveFor("y").toString();
-                    } else if (expression.includes('z')) {
-                        display.value = eq.solveFor("z").toString();
-                    } else {
-                        display.value = 'Cannot solve';
-                    }
-                } else {
-                    // Evaluate the expression directly
-                    display.value = algebra.parse(expression).toString();
-                }
-            } catch (error) {
-                display.value = 'error';
-                errorDisplayed = true;
-            }
+    function setVariable(variable, value) {
+        if (!isNaN(value)) {
+            variables[variable] = parseFloat(value);
+            closeModal();
+        } else {
+            alert("Please enter a valid number for " + variable);
         }
+    }
 
-        function handleFraction(expression) {
-            const display = document.getElementById('display');
-            const parts = expression.split('/');
-            if (parts.length === 3) {
-                const numerator = parseFloat(parts[0]);
-                const denominator = parseFloat(parts[1]) / parseFloat(parts[2]);
-                display.value = (numerator / denominator).toString();
-            } else {
-                display.value = 'error';
-                errorDisplayed = true;
-            }
-        }
+    function insertMultiplication(expression) {
+        // Insert multiplication symbols before variables and fractions
+        expression = expression.replace(/(\d)([xyz])/g, '$1*$2');
+        return expression;
+    }
 
-        function setVariable(variable, value) {
-            if (!isNaN(value)) {
-                variables[variable] = parseFloat(value);
-                closeModal();
-            } else {
-                alert("Please enter a valid number for " + variable);
-            }
-        }
+    function openModal() {
+        document.getElementById('variableModal').style.display = "flex";
+    }
 
-        function insertMultiplication(expression) {
-            // Insert multiplication symbols before variables and fractions
-            expression = expression.replace(/(\d)([xyz])/g, '$1*$2');
-            return expression;
-        }
+    function closeModal() {
+        document.getElementById('variableModal').style.display = "none";
+    }
 
-        function openModal() {
-            document.getElementById('variableModal').style.display = "flex";
-        }
-
-        function closeModal() {
-            document.getElementById('variableModal').style.display = "none";
-        }
-
-        // Example setup for setting variable values
-        // In a real application, you might want to provide an interface for users to set these values
-        setVariable('x', 5);
-        setVariable('y', 3);
-        setVariable('z', 2);
-    </script>
+    // Example setup for setting variable values
+    // In a real application, you might want to provide an interface for users to set these values
+    setVariable('x', 5);
+    setVariable('y', 3);
+    setVariable('z', 2);
+</script>
 </body>
 </html>
