@@ -127,6 +127,20 @@
         .commands-list li {
             margin-bottom: 10px;
         }
+        .commands-list {
+    display: none;
+    position: fixed;
+    top: 70px;
+    right: 20px;
+    width: 250px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 3;
+    padding: 10px;
+    box-sizing: border-box;
+}
     </style>
 </head>
 <body>
@@ -462,53 +476,77 @@
             commandsList.style.display = commandsList.style.display === 'block' ? 'none' : 'block';
         });
 
-        function executeDebugCommand(command) {
-            const [action, value] = command.split(' ');
-            const numValue = parseFloat(value);
-
-            switch (action) {
-                case 'setwaste':
-                    if (!isNaN(numValue)) waste = numValue;
-                    break;
-                case 'setsecurity':
-                    securityThreats = isNaN(numValue) ? securityThreats : numValue > 0 ? 1 : 0;
-                    break;
-                case 'setenvironment':
-                    environmentalImpact = isNaN(numValue) ? environmentalImpact : Math.min(Math.max(numValue, 1), 3);
-                    break;
-                case 'setinfrastructure':
-                    infrastructureStatus = isNaN(numValue) ? infrastructureStatus : Math.min(Math.max(numValue, 1), 3);
-                    break;
-                case 'sethumanerror':
-                    humanError = value === 'true';
-                    break;
-                case 'setdisasters':
-                    naturalDisasters = isNaN(numValue) ? naturalDisasters : numValue > 0 ? 1 : 0;
-                    break;
-                case 'setpublicperception':
-                    publicPerception = isNaN(numValue) ? publicPerception : Math.min(Math.max(numValue, 1), 3);
-                    break;
-                case 'setsupplychain':
-                    supplyChainStable = value === 'true';
-                    break;
-                case 'sethealthrisks':
-                    healthRisks = isNaN(numValue) ? healthRisks : Math.min(Math.max(numValue, 1), 3);
-                    break;
-                case 'setwastepersecond':
-                    if (!isNaN(numValue)) wastePerSecond = numValue;
-                    break;
-                default:
-                    alert('Invalid command');
-            }
-
-            commandHistory.push(command);
-            if (commandHistory.length > 5) {
-                commandHistory.shift();
-            }
-
-            commandsHistory.innerHTML = commandHistory.map(cmd => `<div>${cmd}</div>`).join('');
-            updateStatus();
+       document.addEventListener('keydown', (event) => {
+    if (!debugMode && event.key !== 'Enter') {
+        const input = prompt("Enter debug mode passphrase:");
+        if (input && input.toLowerCase() === 'debug-mode-2025') {
+            debugMode = true;
+            debugConsole.style.display = 'block';
+            commandsButton.style.display = 'block';
+            alert('Debug mode activated');
         }
+    }
+});
+
+debugInput.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+        const command = debugInput.value.trim().toLowerCase();
+        executeDebugCommand(command);
+        debugInput.value = '';
+    }
+});
+
+commandsButton.addEventListener('click', () => {
+    commandsList.style.display = commandsList.style.display === 'block' ? 'none' : 'block';
+});
+
+function executeDebugCommand(command) {
+    const [action, value] = command.split(' ');
+    const numValue = parseFloat(value);
+
+    switch (action) {
+        case 'setwaste':
+            if (!isNaN(numValue)) waste = numValue;
+            break;
+        case 'setsecurity':
+            securityThreats = isNaN(numValue) ? securityThreats : numValue > 0 ? 1 : 0;
+            break;
+        case 'setenvironment':
+            environmentalImpact = isNaN(numValue) ? environmentalImpact : Math.min(Math.max(numValue, 1), 3);
+            break;
+        case 'setinfrastructure':
+            infrastructureStatus = isNaN(numValue) ? infrastructureStatus : Math.min(Math.max(numValue, 1), 3);
+            break;
+        case 'sethumanerror':
+            humanError = value === 'true';
+            break;
+        case 'setdisasters':
+            naturalDisasters = isNaN(numValue) ? naturalDisasters : numValue > 0 ? 1 : 0;
+            break;
+        case 'setpublicperception':
+            publicPerception = isNaN(numValue) ? publicPerception : Math.min(Math.max(numValue, 1), 3);
+            break;
+        case 'setsupplychain':
+            supplyChainStable = value === 'true';
+            break;
+        case 'sethealthrisks':
+            healthRisks = isNaN(numValue) ? healthRisks : Math.min(Math.max(numValue, 1), 3);
+            break;
+        case 'setwastepersecond':
+            if (!isNaN(numValue)) wastePerSecond = numValue;
+            break;
+        default:
+            alert('Invalid command');
+    }
+
+    commandHistory.push(command);
+    if (commandHistory.length > 5) {
+        commandHistory.shift();
+    }
+
+    commandsHistory.innerHTML = commandHistory.map(cmd => `<div>${cmd}</div>`).join('');
+    updateStatus();
+}
     </script>
 </body>
 </html>
