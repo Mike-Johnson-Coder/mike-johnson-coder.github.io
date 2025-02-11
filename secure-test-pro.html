@@ -67,9 +67,13 @@
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     JSZip.loadAsync(e.target.result).then(function(zip) {
-                        zip.file("testQuestions.txt").async("string").then(function(content) {
+                        zip.file("testQuestions.txt", { password: "Test-Taking-Matters:D" }).async("string").then(function(content) {
                             displayQuestions(content);
+                        }).catch(function(err) {
+                            alert('Error reading the zip file: ' + err.message);
                         });
+                    }).catch(function(err) {
+                        alert('Error loading the zip file: ' + err.message);
                     });
                 };
                 reader.readAsArrayBuffer(file);
