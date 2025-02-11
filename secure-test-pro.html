@@ -107,8 +107,8 @@
 
             const emailBody = `Teacher's Email: ${teacherEmail}\n\n${answers}`;
             
-            // Send request to Node.js server hosted on Heroku
-            const response = await fetch('https://your-app-name.herokuapp.com/send-email', {
+            // Send request to the Vercel serverless function
+            const response = await fetch('/api/send-email', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
