@@ -168,26 +168,32 @@
         <input type="text" id="debug-input" placeholder="Enter debug command...">
     </div>
 
-    <div class="debug-console" id="debug-console">
-        <input type="text" id="debug-input" placeholder="Enter debug command...">
-        <div class="commands-history" id="commands-history"></div>
-    </div>
+  <div class="debug-console" id="debug-console">
+    <input type="text" id="debug-input" placeholder="Enter debug command...">
+    <div class="commands-history" id="commands-history"></div>
+</div>
 
     <button class="commands-button" id="commands-button">Commands</button>
     <div class="commands-list" id="commands-list">
-        <ul>
-            <li><code>setwaste [value]</code></li>
-            <li><code>setsecurity [value]</code></li>
-            <li><code>setenvironment [value]</code></li>
-            <li><code>setinfrastructure [value]</code></li>
-            <li><code>sethumanerror [true/false]</code></li>
-            <li><code>setdisasters [value]</code></li>
-            <li><code>setpublicperception [value]</code></li>
-            <li><code>setsupplychain [true/false]</code></li>
-            <li><code>sethealthrisks [value]</code></li>
-            <li><code>setwastepersecond [value]</code></li>
-        </ul>
-    </div>
+    <ul>
+        <li><code>setwaste [value]</code></li>
+        <li><code>setsecurity [value]</code></li>
+        <li><code>setenvironment [value]</code></li>
+        <li><code>setinfrastructure [value]</code></li>
+        <li><code>sethumanerror [true/false]</code></li>
+        <li><code>setdisasters [value]</code></li>
+        <li><code>setpublicperception [value]</code></li>
+        <li><code>setsupplychain [true/false]</code></li>
+        <li><code>sethealthrisks [value]</code></li>
+        <li><code>setwastepersecond [value]</code></li>
+        <li><code>stopwatch</code></li>
+        <li><code>resetwatch</code></li>
+        <li><code>pausereactor</code></li>
+        <li><code>resumereactor</code></li>
+        <li><code>increasepower [value]</code></li>
+        <li><code>decreasepower [value]</code></li>
+    </ul>
+</div>
 
     <script>
         let reactorRunning = false;
@@ -233,6 +239,12 @@
         const debugInput = document.getElementById('debug-input');
         const commandsButton = document.getElementById('commands-button');
         const commandsList = document.getElementById('commands-list');
+        const STOP_WATCH = 'stopwatch';
+const RESET_WATCH = 'resetwatch';
+const PAUSE_REACTOR = 'pausereactor';
+const RESUME_REACTOR = 'resumereactor';
+const INCREASE_POWER = 'increasepower';
+const DECREASE_POWER = 'decreasepower';
 
         document.addEventListener('keydown', (event) => {
             if (event.key.toLowerCase() === 'd') {
@@ -257,47 +269,105 @@
             commandsList.style.display = commandsList.style.display === 'block' ? 'none' : 'block';
         });
 
-        function executeDebugCommand(command) {
-            const [action, value] = command.split(' ');
-            const numValue = parseFloat(value);
+      function executeDebugCommand(command) {
+    const [action, value] = command.split(' ');
+    const numValue = parseFloat(value);
+    let output = '';
 
-            switch (action) {
-                case 'setwaste':
-                    if (!isNaN(numValue)) waste = numValue;
-                    break;
-                case 'setsecurity':
-                    securityThreats = isNaN(numValue) ? securityThreats : numValue > 0 ? 1 : 0;
-                    break;
-                case 'setenvironment':
-                    environmentalImpact = isNaN(numValue) ? environmentalImpact : Math.min(Math.max(numValue, 1), 3);
-                    break;
-                case 'setinfrastructure':
-                    infrastructureStatus = isNaN(numValue) ? infrastructureStatus : Math.min(Math.max(numValue, 1), 3);
-                    break;
-                case 'sethumanerror':
-                    humanError = value === 'true';
-                    break;
-                case 'setdisasters':
-                    naturalDisasters = isNaN(numValue) ? naturalDisasters : numValue > 0 ? 1 : 0;
-                    break;
-                case 'setpublicperception':
-                    publicPerception = isNaN(numValue) ? publicPerception : Math.min(Math.max(numValue, 1), 3);
-                    break;
-                case 'setsupplychain':
-                    supplyChainStable = value === 'true';
-                    break;
-                case 'sethealthrisks':
-                    healthRisks = isNaN(numValue) ? healthRisks : Math.min(Math.max(numValue, 1), 3);
-                    break;
-                case 'setwastepersecond':
-                    if (!isNaN(numValue)) wastePerSecond = numValue;
-                    break;
-                default:
-                    alert('Invalid command');
+    switch (action) {
+        case 'setwaste':
+            if (!isNaN(numValue)) {
+                waste = numValue;
+                output = `Waste set to ${numValue}`;
             }
+            break;
+        case 'setsecurity':
+            securityThreats = isNaN(numValue) ? securityThreats : numValue > 0 ? 1 : 0;
+            output = `Security set to ${securityThreats}`;
+            break;
+        case 'setenvironment':
+            environmentalImpact = isNaN(numValue) ? environmentalImpact : Math.min(Math.max(numValue, 1), 3);
+            output = `Environment set to ${environmentalImpact}`;
+            break;
+        case 'setinfrastructure':
+            infrastructureStatus = isNaN(numValue) ? infrastructureStatus : Math.min(Math.max(numValue, 1), 3);
+            output = `Infrastructure set to ${infrastructureStatus}`;
+            break;
+        case 'sethumanerror':
+            humanError = value === 'true';
+            output = `Human error set to ${humanError}`;
+            break;
+        case 'setdisasters':
+            naturalDisasters = isNaN(numValue) ? naturalDisasters : numValue > 0 ? 1 : 0;
+            output = `Disasters set to ${naturalDisasters}`;
+            break;
+        case 'setpublicperception':
+            publicPerception = isNaN(numValue) ? publicPerception : Math.min(Math.max(numValue, 1), 3);
+            output = `Public perception set to ${publicPerception}`;
+            break;
+        case 'setsupplychain':
+            supplyChainStable = value === 'true';
+            output = `Supply chain set to ${supplyChainStable}`;
+            break;
+        case 'sethealthrisks':
+            healthRisks = isNaN(numValue) ? healthRisks : Math.min(Math.max(numValue, 1), 3);
+            output = `Health risks set to ${healthRisks}`;
+            break;
+        case 'setwastepersecond':
+            if (!isNaN(numValue)) {
+                wastePerSecond = numValue;
+                output = `Waste per second set to ${numValue}`;
+            }
+            break;
+        case STOP_WATCH:
+            stopUptimeCounter();
+            output = 'Stopwatch stopped';
+            break;
+        case RESET_WATCH:
+            uptimeSeconds = 0;
+            updateUptimeDisplay();
+            output = 'Stopwatch reset';
+            break;
+        case PAUSE_REACTOR:
+            if (reactorRunning) {
+                reactorRunning = false;
+                output = 'Reactor paused';
+            } else {
+                output = 'Reactor is not running';
+            }
+            break;
+        case RESUME_REACTOR:
+            if (!reactorRunning) {
+                reactorRunning = true;
+                output = 'Reactor resumed';
+            } else {
+                output = 'Reactor is already running';
+            }
+            break;
+        case INCREASE_POWER:
+            if (!isNaN(numValue)) {
+                powerOutput += numValue;
+                output = `Power output increased by ${numValue} MW`;
+            }
+            break;
+        case DECREASE_POWER:
+            if (!isNaN(numValue)) {
+                powerOutput = Math.max(0, powerOutput - numValue);
+                output = `Power output decreased by ${numValue} MW`;
+            }
+            break;
+        default:
+            output = 'Invalid command';
+    }
 
-            updateStatus();
-        }
+    commandHistory.push(`${command} - ${output}`);
+    if (commandHistory.length > 5) {
+        commandHistory.shift();
+    }
+
+    commandsHistory.innerHTML = commandHistory.map(cmd => `<div>${cmd}</div>`).join('');
+    updateStatus();
+}
 
         startButton.addEventListener('click', () => {
             reactorRunning = true;
@@ -527,6 +597,94 @@ function executeDebugCommand(command) {
     }
 
     commandHistory.push(command);
+    if (commandHistory.length > 5) {
+        commandHistory.shift();
+    }
+
+    commandsHistory.innerHTML = commandHistory.map(cmd => `<div>${cmd}</div>`).join('');
+    updateStatus();
+}
+        let commandHistory = [];
+
+document.addEventListener('keydown', (event) => {
+    if (!debugMode && event.key !== 'Enter') {
+        const input = prompt("Enter debug mode passphrase:");
+        if (input && input.toLowerCase() === 'debug-mode-2025') {
+            debugMode = true;
+            debugConsole.style.display = 'block';
+            commandsButton.style.display = 'block';
+            alert('Debug mode activated');
+        }
+    }
+});
+
+debugInput.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+        const command = debugInput.value.trim().toLowerCase();
+        executeDebugCommand(command);
+        debugInput.value = '';
+    }
+});
+
+commandsButton.addEventListener('click', () => {
+    commandsList.style.display = commandsList.style.display === 'block' ? 'none' : 'block';
+});
+
+function executeDebugCommand(command) {
+    const [action, value] = command.split(' ');
+    const numValue = parseFloat(value);
+    let output = '';
+
+    switch (action) {
+        case 'setwaste':
+            if (!isNaN(numValue)) {
+                waste = numValue;
+                output = `Waste set to ${numValue}`;
+            }
+            break;
+        case 'setsecurity':
+            securityThreats = isNaN(numValue) ? securityThreats : numValue > 0 ? 1 : 0;
+            output = `Security set to ${securityThreats}`;
+            break;
+        case 'setenvironment':
+            environmentalImpact = isNaN(numValue) ? environmentalImpact : Math.min(Math.max(numValue, 1), 3);
+            output = `Environment set to ${environmentalImpact}`;
+            break;
+        case 'setinfrastructure':
+            infrastructureStatus = isNaN(numValue) ? infrastructureStatus : Math.min(Math.max(numValue, 1), 3);
+            output = `Infrastructure set to ${infrastructureStatus}`;
+            break;
+        case 'sethumanerror':
+            humanError = value === 'true';
+            output = `Human error set to ${humanError}`;
+            break;
+        case 'setdisasters':
+            naturalDisasters = isNaN(numValue) ? naturalDisasters : numValue > 0 ? 1 : 0;
+            output = `Disasters set to ${naturalDisasters}`;
+            break;
+        case 'setpublicperception':
+            publicPerception = isNaN(numValue) ? publicPerception : Math.min(Math.max(numValue, 1), 3);
+            output = `Public perception set to ${publicPerception}`;
+            break;
+        case 'setsupplychain':
+            supplyChainStable = value === 'true';
+            output = `Supply chain set to ${supplyChainStable}`;
+            break;
+        case 'sethealthrisks':
+            healthRisks = isNaN(numValue) ? healthRisks : Math.min(Math.max(numValue, 1), 3);
+            output = `Health risks set to ${healthRisks}`;
+            break;
+        case 'setwastepersecond':
+            if (!isNaN(numValue)) {
+                wastePerSecond = numValue;
+                output = `Waste per second set to ${numValue}`;
+            }
+            break;
+        default:
+            output = 'Invalid command';
+    }
+
+    commandHistory.push(`${command} - ${output}`);
     if (commandHistory.length > 5) {
         commandHistory.shift();
     }
