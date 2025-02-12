@@ -459,3 +459,51 @@
                     break;
                 case 'setenvironment':
                     environmentalImpact = isNaN(numValue) ? environmentalImpact : Math.min
+                                        environmentalImpact = isNaN(numValue) ? environmentalImpact : Math.min(Math.max(numValue, 1), 3);
+                    output = `Environment set to ${environmentalImpact}`;
+                    break;
+                case 'setinfrastructure':
+                    infrastructureStatus = isNaN(numValue) ? infrastructureStatus : Math.min(Math.max(numValue, 1), 3);
+                    output = `Infrastructure set to ${infrastructureStatus}`;
+                    break;
+                case 'sethumanerror':
+                    humanError = value === 'true';
+                    output = `Human error set to ${humanError}`;
+                    break;
+                case 'setdisasters':
+                    naturalDisasters = isNaN(numValue) ? naturalDisasters : numValue > 0 ? 1 : 0;
+                    output = `Disasters set to ${naturalDisasters}`;
+                    break;
+                case 'setpublicperception':
+                    publicPerception = isNaN(numValue) ? publicPerception : Math.min(Math.max(numValue, 1), 3);
+                    output = `Public perception set to ${publicPerception}`;
+                    break;
+                case 'setsupplychain':
+                    supplyChainStable = value === 'true';
+                    output = `Supply chain set to ${supplyChainStable}`;
+                    break;
+                case 'sethealthrisks':
+                    healthRisks = isNaN(numValue) ? healthRisks : Math.min(Math.max(numValue, 1), 3);
+                    output = `Health risks set to ${healthRisks}`;
+                    break;
+                case 'setwastepersecond':
+                    if (!isNaN(numValue)) {
+                        wastePerSecond = numValue;
+                        output = `Waste per second set to ${numValue}`;
+                    }
+                    break;
+                default:
+                    output = 'Invalid command';
+            }
+
+            commandHistory.push(`${command} - ${output}`);
+            if (commandHistory.length > 5) {
+                commandHistory.shift();
+            }
+
+            commandsHistory.innerHTML = commandHistory.map(cmd => `<div>${cmd}</div>`).join('');
+            updateStatus();
+        }
+    </script>
+</body>
+</html>
