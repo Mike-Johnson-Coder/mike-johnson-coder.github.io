@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rate Limiting Button</title>
+</head>
+<body>
+    <button id="rateLimitButton">Click me</button>
+    <p id="message"></p>
+
+    <script>
+        const button = document.getElementById('rateLimitButton');
+        const message = document.getElementById('message');
+        let clickCount = 0;
+        const maxClicks = 5; // Maximum number of allowed clicks
+
+        button.addEventListener('click', () => {
+            if (clickCount < maxClicks) {
+                clickCount++;
+                message.textContent = `Button clicked ${clickCount} times`;
+            } else {
+                button.disabled = true;
+                message.textContent = 'Button click limit reached';
+            }
+        });
+    </script>
+</body>
+</html>
