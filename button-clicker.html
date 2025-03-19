@@ -13,15 +13,29 @@
         const button = document.getElementById('rateLimitButton');
         const message = document.getElementById('message');
         let clickCount = 0;
-        const maxClicks = 5; // Maximum number of allowed clicks
+        const maxCPS = 3; // Maximum clicks per second
+        const interval = 1000; // Time frame in milliseconds (1 second)
+        const cooldown = 2000; // Cooldown period in milliseconds (2 seconds)
+        let startTime = Date.now();
 
         button.addEventListener('click', () => {
-            if (clickCount < maxClicks) {
-                clickCount++;
-                message.textContent = `Button clicked ${clickCount} times`;
+            const currentTime = Date.now();
+            if (currentTime - startTime > interval) {
+                // Reset count and start time if the interval has passed
+                clickCount = 0;
+                startTime = currentTime;
+            }
+
+            clickCount++;
+            if (clickCount <= maxCPS) {
+                message.textContent = `Button clicked ${clickCount} times in the last second`;
             } else {
                 button.disabled = true;
-                message.textContent = 'Button click limit reached';
+                message.textContent = 'Rate limit exceeded: Maximum clicks per second reached';
+                setTimeout(() => {
+                    button.disabled = false;
+                    message.textContent = '';
+                }, cooldown);
             }
         });
     </script>
