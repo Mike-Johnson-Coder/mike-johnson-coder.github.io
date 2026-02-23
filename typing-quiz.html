@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing Quiz</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        #quiz { margin: 20px; }
+        #result { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div id="quiz">
+        <h1>Typing Challenge Quiz</h1>
+        <p>Type the text below as fast as you can:</p>
+        <div id="text-to-type" style="font-weight: bold;">The quick brown fox jumps over the lazy dog.</div>
+        <textarea id="user-input" rows="4" cols="50"></textarea>
+        <br/>
+        <button id="submit">Submit</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const submitButton = document.getElementById('submit');
+        const userInput = document.getElementById('user-input');
+        const resultDisplay = document.getElementById('result');
+        const textToType = document.getElementById('text-to-type').innerText;
+
+        submitButton.addEventListener('click', () => {
+            const userText = userInput.value;
+            if (userText === textToType) {
+                resultDisplay.innerText = 'Correct! Well done!';
+            } else {
+                resultDisplay.innerText = 'Oops! That was not correct. Try again!';
+            }
+            userInput.value = '';
+        });
+    </script>
+</body>
+</html>
